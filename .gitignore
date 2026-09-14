@@ -1,0 +1,9 @@
+build/
+main
+compile_commands.json
+.DS_Store
+.cache/
+vendor/raylib/src/*.a
+vendor/raylib/src/**/*.o
+vendor/lua/*.a
+vendor/lua/*.o

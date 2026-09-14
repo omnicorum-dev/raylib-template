@@ -1,7 +1,614 @@
 [
   {
+    "file": "rcore.c",
+    "arguments": [
+      "/usr/bin/clang",
+      "-c",
+      "rcore.c",
+      "-Wall",
+      "-D_GNU_SOURCE",
+      "-DPLATFORM_DESKTOP_GLFW",
+      "-DGRAPHICS_API_OPENGL_33",
+      "-Wno-missing-braces",
+      "-Werror=pointer-arith",
+      "-fno-strict-aliasing",
+      "-std=c99",
+      "-O1",
+      "-Werror=implicit-function-declaration",
+      "-I.",
+      "-Iexternal/glfw/include"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua/vendor/raylib/src"
+  },
+  {
+    "file": "rshapes.c",
+    "arguments": [
+      "/usr/bin/clang",
+      "-c",
+      "rshapes.c",
+      "-Wall",
+      "-D_GNU_SOURCE",
+      "-DPLATFORM_DESKTOP_GLFW",
+      "-DGRAPHICS_API_OPENGL_33",
+      "-Wno-missing-braces",
+      "-Werror=pointer-arith",
+      "-fno-strict-aliasing",
+      "-std=c99",
+      "-O1",
+      "-Werror=implicit-function-declaration",
+      "-I.",
+      "-Iexternal/glfw/include"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua/vendor/raylib/src"
+  },
+  {
+    "file": "rtextures.c",
+    "arguments": [
+      "/usr/bin/clang",
+      "-c",
+      "rtextures.c",
+      "-Wall",
+      "-D_GNU_SOURCE",
+      "-DPLATFORM_DESKTOP_GLFW",
+      "-DGRAPHICS_API_OPENGL_33",
+      "-Wno-missing-braces",
+      "-Werror=pointer-arith",
+      "-fno-strict-aliasing",
+      "-std=c99",
+      "-O1",
+      "-Werror=implicit-function-declaration",
+      "-I.",
+      "-Iexternal/glfw/include"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua/vendor/raylib/src"
+  },
+  {
+    "file": "rtext.c",
+    "arguments": [
+      "/usr/bin/clang",
+      "-c",
+      "rtext.c",
+      "-Wall",
+      "-D_GNU_SOURCE",
+      "-DPLATFORM_DESKTOP_GLFW",
+      "-DGRAPHICS_API_OPENGL_33",
+      "-Wno-missing-braces",
+      "-Werror=pointer-arith",
+      "-fno-strict-aliasing",
+      "-std=c99",
+      "-O1",
+      "-Werror=implicit-function-declaration",
+      "-I.",
+      "-Iexternal/glfw/include"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua/vendor/raylib/src"
+  },
+  {
+    "file": "rglfw.c",
+    "arguments": [
+      "/usr/bin/clang",
+      "-x",
+      "objective-c",
+      "-c",
+      "rglfw.c",
+      "-Wall",
+      "-D_GNU_SOURCE",
+      "-DPLATFORM_DESKTOP_GLFW",
+      "-DGRAPHICS_API_OPENGL_33",
+      "-Wno-missing-braces",
+      "-Werror=pointer-arith",
+      "-fno-strict-aliasing",
+      "-std=c99",
+      "-O1",
+      "-Werror=implicit-function-declaration",
+      "-I.",
+      "-Iexternal/glfw/include",
+      "-U_GNU_SOURCE"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua/vendor/raylib/src"
+  },
+  {
+    "file": "rmodels.c",
+    "arguments": [
+      "/usr/bin/clang",
+      "-c",
+      "rmodels.c",
+      "-Wall",
+      "-D_GNU_SOURCE",
+      "-DPLATFORM_DESKTOP_GLFW",
+      "-DGRAPHICS_API_OPENGL_33",
+      "-Wno-missing-braces",
+      "-Werror=pointer-arith",
+      "-fno-strict-aliasing",
+      "-std=c99",
+      "-O1",
+      "-Werror=implicit-function-declaration",
+      "-I.",
+      "-Iexternal/glfw/include"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua/vendor/raylib/src"
+  },
+  {
+    "file": "raudio.c",
+    "arguments": [
+      "/usr/bin/clang",
+      "-c",
+      "raudio.c",
+      "-Wall",
+      "-D_GNU_SOURCE",
+      "-DPLATFORM_DESKTOP_GLFW",
+      "-DGRAPHICS_API_OPENGL_33",
+      "-Wno-missing-braces",
+      "-Werror=pointer-arith",
+      "-fno-strict-aliasing",
+      "-std=c99",
+      "-O1",
+      "-Werror=implicit-function-declaration",
+      "-I.",
+      "-Iexternal/glfw/include"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua/vendor/raylib/src"
+  },
+  {
+    "file": "vendor/lua/lapi.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lapi.c",
+      "-o",
+      "vendor/lua/lapi.o"
+    ],
     "directory": "/Users/nicorusso/Development/lua/raylib_lua",
-    "command": "cc -I/Users/nicorusso/Development/raylib/raylib-6.0_macos/include/ -I/Users/nicorusso/Development/lua/lua-5.5.1/src -L/Users/nicorusso/Development/raylib/raylib-6.0_macos/lib/ -L/Users/nicorusso/Development/lua/lua-5.5.1/src -Wl,-rpath,/Users/nicorusso/Development/raylib/raylib-6.0_macos/lib/ -o ./main main.c -lraylib -llua",
-    "file": "main.c"
+    "output": "vendor/lua/lapi.o"
+  },
+  {
+    "file": "vendor/lua/lauxlib.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lauxlib.c",
+      "-o",
+      "vendor/lua/lauxlib.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lauxlib.o"
+  },
+  {
+    "file": "vendor/lua/lbaselib.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lbaselib.c",
+      "-o",
+      "vendor/lua/lbaselib.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lbaselib.o"
+  },
+  {
+    "file": "vendor/lua/lcode.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lcode.c",
+      "-o",
+      "vendor/lua/lcode.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lcode.o"
+  },
+  {
+    "file": "vendor/lua/lcorolib.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lcorolib.c",
+      "-o",
+      "vendor/lua/lcorolib.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lcorolib.o"
+  },
+  {
+    "file": "vendor/lua/lctype.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lctype.c",
+      "-o",
+      "vendor/lua/lctype.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lctype.o"
+  },
+  {
+    "file": "vendor/lua/ldblib.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/ldblib.c",
+      "-o",
+      "vendor/lua/ldblib.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/ldblib.o"
+  },
+  {
+    "file": "vendor/lua/ldebug.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/ldebug.c",
+      "-o",
+      "vendor/lua/ldebug.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/ldebug.o"
+  },
+  {
+    "file": "vendor/lua/ldo.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/ldo.c",
+      "-o",
+      "vendor/lua/ldo.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/ldo.o"
+  },
+  {
+    "file": "vendor/lua/ldump.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/ldump.c",
+      "-o",
+      "vendor/lua/ldump.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/ldump.o"
+  },
+  {
+    "file": "vendor/lua/lfunc.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lfunc.c",
+      "-o",
+      "vendor/lua/lfunc.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lfunc.o"
+  },
+  {
+    "file": "vendor/lua/lgc.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lgc.c",
+      "-o",
+      "vendor/lua/lgc.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lgc.o"
+  },
+  {
+    "file": "vendor/lua/linit.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/linit.c",
+      "-o",
+      "vendor/lua/linit.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/linit.o"
+  },
+  {
+    "file": "vendor/lua/liolib.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/liolib.c",
+      "-o",
+      "vendor/lua/liolib.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/liolib.o"
+  },
+  {
+    "file": "vendor/lua/llex.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/llex.c",
+      "-o",
+      "vendor/lua/llex.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/llex.o"
+  },
+  {
+    "file": "vendor/lua/lmathlib.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lmathlib.c",
+      "-o",
+      "vendor/lua/lmathlib.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lmathlib.o"
+  },
+  {
+    "file": "vendor/lua/lmem.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lmem.c",
+      "-o",
+      "vendor/lua/lmem.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lmem.o"
+  },
+  {
+    "file": "vendor/lua/loadlib.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/loadlib.c",
+      "-o",
+      "vendor/lua/loadlib.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/loadlib.o"
+  },
+  {
+    "file": "vendor/lua/lobject.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lobject.c",
+      "-o",
+      "vendor/lua/lobject.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lobject.o"
+  },
+  {
+    "file": "vendor/lua/lopcodes.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lopcodes.c",
+      "-o",
+      "vendor/lua/lopcodes.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lopcodes.o"
+  },
+  {
+    "file": "vendor/lua/loslib.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/loslib.c",
+      "-o",
+      "vendor/lua/loslib.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/loslib.o"
+  },
+  {
+    "file": "vendor/lua/lparser.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lparser.c",
+      "-o",
+      "vendor/lua/lparser.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lparser.o"
+  },
+  {
+    "file": "vendor/lua/lstate.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lstate.c",
+      "-o",
+      "vendor/lua/lstate.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lstate.o"
+  },
+  {
+    "file": "vendor/lua/lstring.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lstring.c",
+      "-o",
+      "vendor/lua/lstring.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lstring.o"
+  },
+  {
+    "file": "vendor/lua/lstrlib.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lstrlib.c",
+      "-o",
+      "vendor/lua/lstrlib.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lstrlib.o"
+  },
+  {
+    "file": "vendor/lua/ltable.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/ltable.c",
+      "-o",
+      "vendor/lua/ltable.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/ltable.o"
+  },
+  {
+    "file": "vendor/lua/ltablib.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/ltablib.c",
+      "-o",
+      "vendor/lua/ltablib.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/ltablib.o"
+  },
+  {
+    "file": "vendor/lua/ltm.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/ltm.c",
+      "-o",
+      "vendor/lua/ltm.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/ltm.o"
+  },
+  {
+    "file": "vendor/lua/lundump.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lundump.c",
+      "-o",
+      "vendor/lua/lundump.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lundump.o"
+  },
+  {
+    "file": "vendor/lua/lutf8lib.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lutf8lib.c",
+      "-o",
+      "vendor/lua/lutf8lib.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lutf8lib.o"
+  },
+  {
+    "file": "vendor/lua/lvm.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lvm.c",
+      "-o",
+      "vendor/lua/lvm.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lvm.o"
+  },
+  {
+    "file": "vendor/lua/lzio.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-DLUA_USE_MACOSX",
+      "-O2",
+      "-c",
+      "vendor/lua/lzio.c",
+      "-o",
+      "vendor/lua/lzio.o"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "vendor/lua/lzio.o"
+  },
+  {
+    "file": "src/main.c",
+    "arguments": [
+      "/usr/bin/cc",
+      "-Isrc",
+      "-Ivendor/raylib/src",
+      "-Ivendor/lua",
+      "-o",
+      "build/main",
+      "src/main.c"
+    ],
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "output": "build/main"
   }
 ]
