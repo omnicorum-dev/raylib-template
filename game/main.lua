@@ -44,19 +44,14 @@ local camera_y = 0
 local smooth_on = true
 local overscan = false
 
--- raylib's C truncf() rounds toward zero (not toward -infinity like
--- math.floor). This matters here because camera_x/camera_y swing negative,
--- and using floor instead of trunc shifts where the world camera's integer
--- part snaps relative to the fractional remainder handed to the screen
--- space camera.
-local function trunc(x)
+local trunc = function(x)
 	if x < 0 then
 		return math.ceil(x)
 	end
 	return math.floor(x)
 end
 
-SetTargetFPS(90)
+SetTargetFPS(60)
 
 while not WindowShouldClose() do
 	-- update
