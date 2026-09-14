@@ -1,16 +1,11 @@
 #include "lua.h"
-#include <stdio.h>
-#define OMNI_IMPLEMENTATION
-#include "omni.h"
-
 #include "raylib_bindings.h"
-
 #include <lauxlib.h>
-#include <lualib.h>
-#include <raylib.h>
-
 #include <libgen.h>
 #include <limits.h>
+#include <lualib.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 lua_State *L;
@@ -83,10 +78,9 @@ int main(int argc, char *argv[]) {
     lua_pushcfunction(L, messageHandler);
     int messageHandlerIndex = lua_gettop(L);
 
-    if (luaL_loadfile(L, "game/script.lua") != LUA_OK) {
-        fprintf(stderr,
-                "Failed to load game/script.lua: %s\n",
-                lua_tostring(L, -1));
+    if (luaL_loadfile(L, "game/main.lua") != LUA_OK) {
+        fprintf(
+            stderr, "Failed to load game/main.lua: %s\n", lua_tostring(L, -1));
         lua_pop(L, 1);
         return 1;
     }
