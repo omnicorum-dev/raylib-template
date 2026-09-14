@@ -3,18 +3,21 @@
 #define FLAG_IMPLEMENTATION
 #include "flag.h"
 
-Cmd cmd = {};
+Cmd          cmd    = {};
 static Cc_Db compdb = {0};
 
 static void usage(void) {
-    fprintf(stderr, "Usage: %s [<FLAGS>] [--] [<program args>]\n",
+    fprintf(stderr,
+            "Usage: %s [<FLAGS>] [--] [<program args>]\n",
             flag_program_name());
     fprintf(stderr, "FLAGS:\n");
     flag_print_options(stderr);
 }
 
 int main(int argc, char **argv) {
-    bool run = false;
+    GO_REBUILD_URSELF(argc, argv);
+
+    bool run  = false;
     bool help = false;
     flag_bool_var(&run, "run", false, "Run the program after compilation");
     flag_bool_var(&help, "help", false, "Print this help message");
@@ -36,10 +39,12 @@ int main(int argc, char **argv) {
 
     cmd_append(
         &cmd,
-        "-I/Users/nicorusso/Development/raylib/raylib-6.0_macos/include/");
+        "-I/Users/nicorusso/Development/raylib/raylib-6.0_macos/include/",
+        "-I/Users/nicorusso/Development/lua/lua-5.5.1/src");
 
     cmd_append(&cmd,
-               "-L/Users/nicorusso/Development/raylib/raylib-6.0_macos/lib/");
+               "-L/Users/nicorusso/Development/raylib/raylib-6.0_macos/lib/",
+               "-L/Users/nicorusso/Development/lua/lua-5.5.1/src");
 
     cmd_append(
         &cmd,
@@ -47,7 +52,7 @@ int main(int argc, char **argv) {
 
     cmd_append(&cmd, "-o", "./main", "main.c");
 
-    cmd_append(&cmd, "-lraylib");
+    cmd_append(&cmd, "-lraylib", "-llua");
 
     // If you ever split this into several source files, add one
     // cc_db_add(&compdb, cmd, "...") per file (right before that file's

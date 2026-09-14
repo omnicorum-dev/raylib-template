@@ -1,0 +1,7 @@
+[
+  {
+    "directory": "/Users/nicorusso/Development/lua/raylib_lua",
+    "command": "cc -I/Users/nicorusso/Development/raylib/raylib-6.0_macos/include/ -I/Users/nicorusso/Development/lua/lua-5.5.1/src -L/Users/nicorusso/Development/raylib/raylib-6.0_macos/lib/ -L/Users/nicorusso/Development/lua/lua-5.5.1/src -Wl,-rpath,/Users/nicorusso/Development/raylib/raylib-6.0_macos/lib/ -o ./main main.c -lraylib -llua",
+    "file": "main.c"
+  }
+]
