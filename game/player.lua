@@ -1,7 +1,7 @@
 -- Player: position/velocity state, sprite, and simple mouse-follow physics.
 --
 -- Player.new() loads the player's texture, so it must only be called after
--- rl.InitWindow() has created the GL context textures need. main.lua is
+-- InitWindow() has created the GL context textures need. main.lua is
 -- responsible for that ordering -- this module just defines the class.
 
 local Player = {}
@@ -15,16 +15,16 @@ local GRAVITY  = 9
 function Player.new(x, y)
 	local self = setmetatable({}, Player)
 
-	self.pos = rl.Vector2(x, y)
-	self.vel = rl.Vector2(0, 0)
-	self.sprite = rl.LoadTexture("assets/netskie.png")
+	self.pos = Vector2(x, y)
+	self.vel = Vector2(0, 0)
+	self.sprite = LoadTexture("assets/netskie.png")
 
 	return self
 end
 
 function Player:update(dt)
-	if rl.IsMouseButtonDown(MOUSE_BUTTON_LEFT) then
-		local mouse = rl.GetMousePosition()
+	if IsMouseButtonDown(MOUSE_BUTTON_LEFT) then
+		local mouse = GetMousePosition()
 		local toMouse = (mouse - self.pos):normalize()
 
 		self.vel = self.vel + toMouse * ACCEL * dt
@@ -38,21 +38,21 @@ function Player:update(dt)
 end
 
 function Player:draw()
-	if rl.IsMouseButtonDown(MOUSE_BUTTON_LEFT) then
-		local mouse = rl.GetMousePosition()
-		rl.DrawCircleV(mouse, 10, YELLOW)
-		rl.DrawLine(mouse.x, mouse.y, self.pos.x, self.pos.y, BLUE)
+	if IsMouseButtonDown(MOUSE_BUTTON_LEFT) then
+		local mouse = GetMousePosition()
+		DrawCircleV(mouse, 10, YELLOW)
+		DrawLine(mouse.x, mouse.y, self.pos.x, self.pos.y, BLUE)
 	end
 
-	rl.DrawTextureV(
+	DrawTextureV(
 		self.sprite,
-		rl.Vector2(self.pos.x - self.sprite.width / 2, self.pos.y - self.sprite.height / 2),
+		Vector2(self.pos.x - self.sprite.width / 2, self.pos.y - self.sprite.height / 2),
 		WHITE
 	)
 end
 
 function Player:unload()
-	rl.UnloadTexture(self.sprite)
+	UnloadTexture(self.sprite)
 end
 
 return Player

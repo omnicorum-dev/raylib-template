@@ -6,6 +6,7 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
 
 static Color lua_checkColor(lua_State *L, int index) {
@@ -75,6 +76,151 @@ static void pushVector2(lua_State *L, Vector2 v) {
     lua_setmetatable(L, -2);
 }
 
+static Vector3 lua_checkVector3(lua_State *L, int index) {
+    luaL_checktype(L, index, LUA_TTABLE);
+
+    lua_getfield(L, index, "x");
+    float x = (float)luaL_checknumber(L, -1);
+    lua_pop(L, 1);
+
+    lua_getfield(L, index, "y");
+    float y = (float)luaL_checknumber(L, -1);
+    lua_pop(L, 1);
+
+    lua_getfield(L, index, "z");
+    float z = (float)luaL_checknumber(L, -1);
+    lua_pop(L, 1);
+
+    return (Vector3){.x = x, .y = y, .z = z};
+}
+
+#define VECTOR3_METATABLE "Vector3"
+
+static void pushVector3(lua_State *L, Vector3 v) {
+    lua_createtable(L, 0, 3);
+
+    lua_pushnumber(L, v.x);
+    lua_setfield(L, -2, "x");
+
+    lua_pushnumber(L, v.y);
+    lua_setfield(L, -2, "y");
+
+    lua_pushnumber(L, v.z);
+    lua_setfield(L, -2, "z");
+
+    luaL_getmetatable(L, VECTOR3_METATABLE);
+    lua_setmetatable(L, -2);
+}
+
+static Vector4 lua_checkVector4(lua_State *L, int index) {
+    luaL_checktype(L, index, LUA_TTABLE);
+
+    lua_getfield(L, index, "x");
+    float x = (float)luaL_checknumber(L, -1);
+    lua_pop(L, 1);
+
+    lua_getfield(L, index, "y");
+    float y = (float)luaL_checknumber(L, -1);
+    lua_pop(L, 1);
+
+    lua_getfield(L, index, "z");
+    float z = (float)luaL_checknumber(L, -1);
+    lua_pop(L, 1);
+
+    lua_getfield(L, index, "w");
+    float w = (float)luaL_checknumber(L, -1);
+    lua_pop(L, 1);
+
+    return (Vector4){.x = x, .y = y, .z = z, .w = w};
+}
+
+#define VECTOR4_METATABLE "Vector4"
+
+static void pushVector4(lua_State *L, Vector4 v) {
+    lua_createtable(L, 0, 4);
+
+    lua_pushnumber(L, v.x);
+    lua_setfield(L, -2, "x");
+
+    lua_pushnumber(L, v.y);
+    lua_setfield(L, -2, "y");
+
+    lua_pushnumber(L, v.z);
+    lua_setfield(L, -2, "z");
+
+    lua_pushnumber(L, v.w);
+    lua_setfield(L, -2, "w");
+
+    luaL_getmetatable(L, VECTOR4_METATABLE);
+    lua_setmetatable(L, -2);
+}
+
+// Matrix is a plain table of its 16 raw fields (m0..m15, matching raylib's
+// C struct field names exactly) -- same "value type as table" treatment as
+// Color/Vector2/Rectangle, since a Matrix owns no GPU/CPU resource.
+static Matrix lua_checkMatrix(lua_State *L, int index) {
+    luaL_checktype(L, index, LUA_TTABLE);
+
+    Matrix mat;
+    const char *fields[16] = {
+        "m0", "m1", "m2",  "m3",  "m4",  "m5",  "m6",  "m7",
+        "m8", "m9", "m10", "m11", "m12", "m13", "m14", "m15"};
+    float *slots[16] = {
+        &mat.m0, &mat.m1, &mat.m2,  &mat.m3,  &mat.m4,  &mat.m5,  &mat.m6,
+        &mat.m7, &mat.m8, &mat.m9,  &mat.m10, &mat.m11, &mat.m12, &mat.m13,
+        &mat.m14, &mat.m15};
+
+    for (int i = 0; i < 16; i++) {
+        lua_getfield(L, index, fields[i]);
+        *slots[i] = (float)luaL_checknumber(L, -1);
+        lua_pop(L, 1);
+    }
+
+    return mat;
+}
+
+#define MATRIX_METATABLE "Matrix"
+
+static void pushMatrix(lua_State *L, Matrix mat) {
+    lua_createtable(L, 0, 16);
+
+    lua_pushnumber(L, mat.m0);
+    lua_setfield(L, -2, "m0");
+    lua_pushnumber(L, mat.m1);
+    lua_setfield(L, -2, "m1");
+    lua_pushnumber(L, mat.m2);
+    lua_setfield(L, -2, "m2");
+    lua_pushnumber(L, mat.m3);
+    lua_setfield(L, -2, "m3");
+    lua_pushnumber(L, mat.m4);
+    lua_setfield(L, -2, "m4");
+    lua_pushnumber(L, mat.m5);
+    lua_setfield(L, -2, "m5");
+    lua_pushnumber(L, mat.m6);
+    lua_setfield(L, -2, "m6");
+    lua_pushnumber(L, mat.m7);
+    lua_setfield(L, -2, "m7");
+    lua_pushnumber(L, mat.m8);
+    lua_setfield(L, -2, "m8");
+    lua_pushnumber(L, mat.m9);
+    lua_setfield(L, -2, "m9");
+    lua_pushnumber(L, mat.m10);
+    lua_setfield(L, -2, "m10");
+    lua_pushnumber(L, mat.m11);
+    lua_setfield(L, -2, "m11");
+    lua_pushnumber(L, mat.m12);
+    lua_setfield(L, -2, "m12");
+    lua_pushnumber(L, mat.m13);
+    lua_setfield(L, -2, "m13");
+    lua_pushnumber(L, mat.m14);
+    lua_setfield(L, -2, "m14");
+    lua_pushnumber(L, mat.m15);
+    lua_setfield(L, -2, "m15");
+
+    luaL_getmetatable(L, MATRIX_METATABLE);
+    lua_setmetatable(L, -2);
+}
+
 static Rectangle lua_checkRectangle(lua_State *L, int index) {
     luaL_checktype(L, index, LUA_TTABLE);
 
@@ -136,8 +282,11 @@ static Texture2D lua_checkTexture2D(lua_State *L, int index) {
     int format = (int)luaL_checkinteger(L, -1);
     lua_pop(L, 1);
 
-    return (Texture2D){
-        .id = id, .width = width, .height = height, .mipmaps = mipmaps, .format = format};
+    return (Texture2D){.id      = id,
+                       .width   = width,
+                       .height  = height,
+                       .mipmaps = mipmaps,
+                       .format  = format};
 }
 
 static void pushTexture2D(lua_State *L, Texture2D t) {
@@ -216,8 +365,15 @@ static Font *lua_checkFont(lua_State *L, int index) {
     return (Font *)luaL_checkudata(L, index, FONT_METATABLE);
 }
 
+#define SHADER_METATABLE "Shader"
+
+static Shader *lua_checkShader(lua_State *L, int index) {
+    return (Shader *)luaL_checkudata(L, index, SHADER_METATABLE);
+}
+
 static RenderTexture2D *lua_checkRenderTexture2D(lua_State *L, int index) {
-    return (RenderTexture2D *)luaL_checkudata(L, index, RENDERTEXTURE2D_METATABLE);
+    return (RenderTexture2D *)luaL_checkudata(
+        L, index, RENDERTEXTURE2D_METATABLE);
 }
 
 // RenderTexture2D exposes its color/depth attachments as read-only fields
@@ -247,6 +403,61 @@ static void registerRenderTexture2DMetatable(lua_State *L) {
     lua_pushcfunction(L, lua_RenderTexture2DIndex_mm);
     lua_setfield(L, -2, "__index");
     lua_pop(L, 1);
+}
+
+#define IMAGE_METATABLE "Image"
+
+static Image *lua_checkImage(lua_State *L, int index) {
+    return (Image *)luaL_checkudata(L, index, IMAGE_METATABLE);
+}
+
+// Image exposes its dimensions as read-only fields (image.width / .height /
+// .mipmaps / .format) via this __index metamethod, since the userdata only
+// stores the raw C struct (including the CPU-side pixel data pointer).
+static int lua_ImageIndex_mm(lua_State *L) {
+    Image      *img = lua_checkImage(L, 1);
+    const char *key  = luaL_checkstring(L, 2);
+
+    if (strcmp(key, "width") == 0) {
+        lua_pushinteger(L, img->width);
+        return 1;
+    }
+    if (strcmp(key, "height") == 0) {
+        lua_pushinteger(L, img->height);
+        return 1;
+    }
+    if (strcmp(key, "mipmaps") == 0) {
+        lua_pushinteger(L, img->mipmaps);
+        return 1;
+    }
+    if (strcmp(key, "format") == 0) {
+        lua_pushinteger(L, img->format);
+        return 1;
+    }
+    return 0;
+}
+
+static void registerImageMetatable(lua_State *L) {
+    luaL_newmetatable(L, IMAGE_METATABLE);
+    lua_pushcfunction(L, lua_ImageIndex_mm);
+    lua_setfield(L, -2, "__index");
+    lua_pop(L, 1);
+}
+
+// Converts a Lua array table of Vector2 tables ({p1, p2, p3, ...}) into a
+// heap-allocated Vector2 array; caller must free() the result. Used by the
+// spline drawing functions, which all take a raw Vector2* + count.
+static Vector2 *lua_checkVector2Array(lua_State *L, int index, int *count) {
+    luaL_checktype(L, index, LUA_TTABLE);
+    int      n      = (int)lua_rawlen(L, index);
+    Vector2 *points = (Vector2 *)malloc(sizeof(Vector2) * (size_t)n);
+    for (int i = 0; i < n; i++) {
+        lua_geti(L, index, i + 1);
+        points[i] = lua_checkVector2(L, -1);
+        lua_pop(L, 1);
+    }
+    *count = n;
+    return points;
 }
 
 #define pushColorGlobal(L, color)                                              \
@@ -539,9 +750,13 @@ int lua_DrawRing(lua_State *L) {
     float   endAngle    = (float)luaL_checknumber(L, 5);
     int     segments    = (int)luaL_checkinteger(L, 6);
     Color   color       = lua_checkColor(L, 7);
-    DrawRing(
-        center, innerRadius, outerRadius, startAngle, endAngle, segments,
-        color);
+    DrawRing(center,
+             innerRadius,
+             outerRadius,
+             startAngle,
+             endAngle,
+             segments,
+             color);
     return 0;
 }
 
@@ -643,6 +858,58 @@ int lua_DrawPolyLines(lua_State *L) {
     return 0;
 }
 
+// ---- Splines (each takes a Lua array table of Vector2 points) ----
+
+int lua_DrawSplineLinear(lua_State *L) {
+    int      count;
+    Vector2 *points = lua_checkVector2Array(L, 1, &count);
+    float    thick  = (float)luaL_checknumber(L, 2);
+    Color    color  = lua_checkColor(L, 3);
+    DrawSplineLinear(points, count, thick, color);
+    free(points);
+    return 0;
+}
+
+int lua_DrawSplineBasis(lua_State *L) {
+    int      count;
+    Vector2 *points = lua_checkVector2Array(L, 1, &count);
+    float    thick  = (float)luaL_checknumber(L, 2);
+    Color    color  = lua_checkColor(L, 3);
+    DrawSplineBasis(points, count, thick, color);
+    free(points);
+    return 0;
+}
+
+int lua_DrawSplineCatmullRom(lua_State *L) {
+    int      count;
+    Vector2 *points = lua_checkVector2Array(L, 1, &count);
+    float    thick  = (float)luaL_checknumber(L, 2);
+    Color    color  = lua_checkColor(L, 3);
+    DrawSplineCatmullRom(points, count, thick, color);
+    free(points);
+    return 0;
+}
+
+int lua_DrawSplineBezierQuadratic(lua_State *L) {
+    int      count;
+    Vector2 *points = lua_checkVector2Array(L, 1, &count);
+    float    thick  = (float)luaL_checknumber(L, 2);
+    Color    color  = lua_checkColor(L, 3);
+    DrawSplineBezierQuadratic(points, count, thick, color);
+    free(points);
+    return 0;
+}
+
+int lua_DrawSplineBezierCubic(lua_State *L) {
+    int      count;
+    Vector2 *points = lua_checkVector2Array(L, 1, &count);
+    float    thick  = (float)luaL_checknumber(L, 2);
+    Color    color  = lua_checkColor(L, 3);
+    DrawSplineBezierCubic(points, count, thick, color);
+    free(points);
+    return 0;
+}
+
 int lua_IsKeyDown(lua_State *L) {
     int key = (int)luaL_checkinteger(L, 1);
     lua_pushboolean(L, IsKeyDown(key));
@@ -693,6 +960,104 @@ int lua_GetMousePosition(lua_State *L) {
 int lua_GetMouseWheelMove(lua_State *L) {
     lua_pushnumber(L, GetMouseWheelMove());
     return 1;
+}
+
+// ---- Cursor & mouse control ----
+
+int lua_ShowCursor(lua_State *L) {
+    ShowCursor();
+    return 0;
+}
+
+int lua_HideCursor(lua_State *L) {
+    HideCursor();
+    return 0;
+}
+
+int lua_IsCursorHidden(lua_State *L) {
+    lua_pushboolean(L, IsCursorHidden());
+    return 1;
+}
+
+int lua_EnableCursor(lua_State *L) {
+    EnableCursor();
+    return 0;
+}
+
+int lua_DisableCursor(lua_State *L) {
+    DisableCursor();
+    return 0;
+}
+
+int lua_IsCursorOnScreen(lua_State *L) {
+    lua_pushboolean(L, IsCursorOnScreen());
+    return 1;
+}
+
+int lua_GetMouseDelta(lua_State *L) {
+    pushVector2(L, GetMouseDelta());
+    return 1;
+}
+
+int lua_SetMousePosition(lua_State *L) {
+    int x = (int)luaL_checkinteger(L, 1);
+    int y = (int)luaL_checkinteger(L, 2);
+    SetMousePosition(x, y);
+    return 0;
+}
+
+int lua_SetMouseOffset(lua_State *L) {
+    int offsetX = (int)luaL_checkinteger(L, 1);
+    int offsetY = (int)luaL_checkinteger(L, 2);
+    SetMouseOffset(offsetX, offsetY);
+    return 0;
+}
+
+int lua_SetMouseScale(lua_State *L) {
+    float scaleX = (float)luaL_checknumber(L, 1);
+    float scaleY = (float)luaL_checknumber(L, 2);
+    SetMouseScale(scaleX, scaleY);
+    return 0;
+}
+
+int lua_SetMouseCursor(lua_State *L) {
+    int cursor = (int)luaL_checkinteger(L, 1);
+    SetMouseCursor(cursor);
+    return 0;
+}
+
+// ---- Keyboard extras & clipboard ----
+
+int lua_GetKeyPressed(lua_State *L) {
+    lua_pushinteger(L, GetKeyPressed());
+    return 1;
+}
+
+int lua_GetCharPressed(lua_State *L) {
+    lua_pushinteger(L, GetCharPressed());
+    return 1;
+}
+
+int lua_SetExitKey(lua_State *L) {
+    int key = (int)luaL_checkinteger(L, 1);
+    SetExitKey(key);
+    return 0;
+}
+
+int lua_GetClipboardText(lua_State *L) {
+    const char *text = GetClipboardText();
+    if (text == NULL) {
+        lua_pushnil(L);
+    } else {
+        lua_pushstring(L, text);
+    }
+    return 1;
+}
+
+int lua_SetClipboardText(lua_State *L) {
+    const char *text = luaL_checkstring(L, 1);
+    SetClipboardText(text);
+    return 0;
 }
 
 // ---- Gamepad input ----
@@ -821,6 +1186,20 @@ int lua_SetSoundVolume(lua_State *L) {
     return 0;
 }
 
+int lua_SetSoundPitch(lua_State *L) {
+    Sound *sound = lua_checkSound(L, 1);
+    float  pitch = (float)luaL_checknumber(L, 2);
+    SetSoundPitch(*sound, pitch);
+    return 0;
+}
+
+int lua_SetSoundPan(lua_State *L) {
+    Sound *sound = lua_checkSound(L, 1);
+    float  pan   = (float)luaL_checknumber(L, 2);
+    SetSoundPan(*sound, pan);
+    return 0;
+}
+
 int lua_LoadMusicStream(lua_State *L) {
     const char *fileName = luaL_checkstring(L, 1);
     Music       music    = LoadMusicStream(fileName);
@@ -878,6 +1257,39 @@ int lua_SetMusicVolume(lua_State *L) {
     Music *music  = lua_checkMusic(L, 1);
     float  volume = (float)luaL_checknumber(L, 2);
     SetMusicVolume(*music, volume);
+    return 0;
+}
+
+int lua_SetMusicPitch(lua_State *L) {
+    Music *music = lua_checkMusic(L, 1);
+    float  pitch = (float)luaL_checknumber(L, 2);
+    SetMusicPitch(*music, pitch);
+    return 0;
+}
+
+int lua_SetMusicPan(lua_State *L) {
+    Music *music = lua_checkMusic(L, 1);
+    float  pan   = (float)luaL_checknumber(L, 2);
+    SetMusicPan(*music, pan);
+    return 0;
+}
+
+int lua_GetMusicTimeLength(lua_State *L) {
+    Music *music = lua_checkMusic(L, 1);
+    lua_pushnumber(L, GetMusicTimeLength(*music));
+    return 1;
+}
+
+int lua_GetMusicTimePlayed(lua_State *L) {
+    Music *music = lua_checkMusic(L, 1);
+    lua_pushnumber(L, GetMusicTimePlayed(*music));
+    return 1;
+}
+
+int lua_SeekMusicStream(lua_State *L) {
+    Music *music    = lua_checkMusic(L, 1);
+    float  position = (float)luaL_checknumber(L, 2);
+    SeekMusicStream(*music, position);
     return 0;
 }
 
@@ -1087,6 +1499,41 @@ int lua_Vector2Invert_m(lua_State *L) {
     return 1;
 }
 
+int lua_Vector2LengthSqr_m(lua_State *L) {
+    Vector2 v = lua_checkVector2(L, 1);
+    lua_pushnumber(L, Vector2LengthSqr(v));
+    return 1;
+}
+
+int lua_Vector2DistanceSqr_m(lua_State *L) {
+    Vector2 a = lua_checkVector2(L, 1);
+    Vector2 b = lua_checkVector2(L, 2);
+    lua_pushnumber(L, Vector2DistanceSqr(a, b));
+    return 1;
+}
+
+int lua_Vector2LineAngle_m(lua_State *L) {
+    Vector2 start = lua_checkVector2(L, 1);
+    Vector2 end   = lua_checkVector2(L, 2);
+    lua_pushnumber(L, Vector2LineAngle(start, end));
+    return 1;
+}
+
+int lua_Vector2CrossProduct_m(lua_State *L) {
+    Vector2 a = lua_checkVector2(L, 1);
+    Vector2 b = lua_checkVector2(L, 2);
+    lua_pushnumber(L, Vector2CrossProduct(a, b));
+    return 1;
+}
+
+int lua_Vector2Refract_m(lua_State *L) {
+    Vector2 v = lua_checkVector2(L, 1);
+    Vector2 n = lua_checkVector2(L, 2);
+    float   r = (float)luaL_checknumber(L, 3);
+    pushVector2(L, Vector2Refract(v, n, r));
+    return 1;
+}
+
 static void registerVector2Metatable(lua_State *L) {
     luaL_newmetatable(L, VECTOR2_METATABLE);
 
@@ -1131,7 +1578,511 @@ static void registerVector2Metatable(lua_State *L) {
     lua_setfield(L, -2, "clamp");
     lua_pushcfunction(L, lua_Vector2Invert_m);
     lua_setfield(L, -2, "invert");
+    lua_pushcfunction(L, lua_Vector2LengthSqr_m);
+    lua_setfield(L, -2, "lengthSqr");
+    lua_pushcfunction(L, lua_Vector2DistanceSqr_m);
+    lua_setfield(L, -2, "distanceSqr");
+    lua_pushcfunction(L, lua_Vector2LineAngle_m);
+    lua_setfield(L, -2, "lineAngle");
+    lua_pushcfunction(L, lua_Vector2CrossProduct_m);
+    lua_setfield(L, -2, "cross");
+    lua_pushcfunction(L, lua_Vector2Refract_m);
+    lua_setfield(L, -2, "refract");
     lua_setfield(L, -2, "__index");
+
+    lua_pop(L, 1); // pop the metatable; it stays registered in the Lua registry
+}
+
+// ---- Vector3 constructor ----
+
+int lua_Vector3(lua_State *L) {
+    float x = (float)luaL_checknumber(L, 1);
+    float y = (float)luaL_checknumber(L, 2);
+    float z = (float)luaL_checknumber(L, 3);
+    pushVector3(L, (Vector3){.x = x, .y = y, .z = z});
+    return 1;
+}
+
+// ---- Vector3 operator metamethods ----
+
+int lua_Vector3Add_mm(lua_State *L) {
+    Vector3 a = lua_checkVector3(L, 1);
+    Vector3 b = lua_checkVector3(L, 2);
+    pushVector3(L, Vector3Add(a, b));
+    return 1;
+}
+
+int lua_Vector3Sub_mm(lua_State *L) {
+    Vector3 a = lua_checkVector3(L, 1);
+    Vector3 b = lua_checkVector3(L, 2);
+    pushVector3(L, Vector3Subtract(a, b));
+    return 1;
+}
+
+int lua_Vector3Mul_mm(lua_State *L) {
+    if (lua_type(L, 1) == LUA_TNUMBER) {
+        float   scalar = (float)lua_tonumber(L, 1);
+        Vector3 v      = lua_checkVector3(L, 2);
+        pushVector3(L, Vector3Scale(v, scalar));
+    } else if (lua_type(L, 2) == LUA_TNUMBER) {
+        Vector3 v      = lua_checkVector3(L, 1);
+        float   scalar = (float)lua_tonumber(L, 2);
+        pushVector3(L, Vector3Scale(v, scalar));
+    } else {
+        Vector3 a = lua_checkVector3(L, 1);
+        Vector3 b = lua_checkVector3(L, 2);
+        pushVector3(L, Vector3Multiply(a, b));
+    }
+    return 1;
+}
+
+int lua_Vector3Unm_mm(lua_State *L) {
+    Vector3 v = lua_checkVector3(L, 1);
+    pushVector3(L, Vector3Negate(v));
+    return 1;
+}
+
+int lua_Vector3Eq_mm(lua_State *L) {
+    Vector3 a = lua_checkVector3(L, 1);
+    Vector3 b = lua_checkVector3(L, 2);
+    lua_pushboolean(L, Vector3Equals(a, b));
+    return 1;
+}
+
+int lua_Vector3ToString_mm(lua_State *L) {
+    Vector3 v = lua_checkVector3(L, 1);
+    lua_pushfstring(L, "Vector3(%f, %f, %f)", v.x, v.y, v.z);
+    return 1;
+}
+
+// ---- Vector3 methods (called as v:method(...)) ----
+
+int lua_Vector3Length_m(lua_State *L) {
+    Vector3 v = lua_checkVector3(L, 1);
+    lua_pushnumber(L, Vector3Length(v));
+    return 1;
+}
+
+int lua_Vector3LengthSqr_m(lua_State *L) {
+    Vector3 v = lua_checkVector3(L, 1);
+    lua_pushnumber(L, Vector3LengthSqr(v));
+    return 1;
+}
+
+int lua_Vector3Normalize_m(lua_State *L) {
+    Vector3 v = lua_checkVector3(L, 1);
+    pushVector3(L, Vector3Normalize(v));
+    return 1;
+}
+
+int lua_Vector3Dot_m(lua_State *L) {
+    Vector3 a = lua_checkVector3(L, 1);
+    Vector3 b = lua_checkVector3(L, 2);
+    lua_pushnumber(L, Vector3DotProduct(a, b));
+    return 1;
+}
+
+int lua_Vector3Cross_m(lua_State *L) {
+    Vector3 a = lua_checkVector3(L, 1);
+    Vector3 b = lua_checkVector3(L, 2);
+    pushVector3(L, Vector3CrossProduct(a, b));
+    return 1;
+}
+
+int lua_Vector3Distance_m(lua_State *L) {
+    Vector3 a = lua_checkVector3(L, 1);
+    Vector3 b = lua_checkVector3(L, 2);
+    lua_pushnumber(L, Vector3Distance(a, b));
+    return 1;
+}
+
+int lua_Vector3DistanceSqr_m(lua_State *L) {
+    Vector3 a = lua_checkVector3(L, 1);
+    Vector3 b = lua_checkVector3(L, 2);
+    lua_pushnumber(L, Vector3DistanceSqr(a, b));
+    return 1;
+}
+
+int lua_Vector3Lerp_m(lua_State *L) {
+    Vector3 a      = lua_checkVector3(L, 1);
+    Vector3 b      = lua_checkVector3(L, 2);
+    float   amount = (float)luaL_checknumber(L, 3);
+    pushVector3(L, Vector3Lerp(a, b, amount));
+    return 1;
+}
+
+int lua_Vector3Angle_m(lua_State *L) {
+    Vector3 a = lua_checkVector3(L, 1);
+    Vector3 b = lua_checkVector3(L, 2);
+    lua_pushnumber(L, Vector3Angle(a, b));
+    return 1;
+}
+
+int lua_Vector3Reflect_m(lua_State *L) {
+    Vector3 v      = lua_checkVector3(L, 1);
+    Vector3 normal = lua_checkVector3(L, 2);
+    pushVector3(L, Vector3Reflect(v, normal));
+    return 1;
+}
+
+int lua_Vector3MoveTowards_m(lua_State *L) {
+    Vector3 v           = lua_checkVector3(L, 1);
+    Vector3 target      = lua_checkVector3(L, 2);
+    float   maxDistance = (float)luaL_checknumber(L, 3);
+    pushVector3(L, Vector3MoveTowards(v, target, maxDistance));
+    return 1;
+}
+
+int lua_Vector3Clamp_m(lua_State *L) {
+    Vector3 v   = lua_checkVector3(L, 1);
+    Vector3 min = lua_checkVector3(L, 2);
+    Vector3 max = lua_checkVector3(L, 3);
+    pushVector3(L, Vector3Clamp(v, min, max));
+    return 1;
+}
+
+int lua_Vector3Invert_m(lua_State *L) {
+    Vector3 v = lua_checkVector3(L, 1);
+    pushVector3(L, Vector3Invert(v));
+    return 1;
+}
+
+int lua_Vector3RotateByAxisAngle_m(lua_State *L) {
+    Vector3 v     = lua_checkVector3(L, 1);
+    Vector3 axis  = lua_checkVector3(L, 2);
+    float   angle = (float)luaL_checknumber(L, 3);
+    pushVector3(L, Vector3RotateByAxisAngle(v, axis, angle));
+    return 1;
+}
+
+int lua_Vector3Transform_m(lua_State *L) {
+    Vector3 v   = lua_checkVector3(L, 1);
+    Matrix  mat = lua_checkMatrix(L, 2);
+    pushVector3(L, Vector3Transform(v, mat));
+    return 1;
+}
+
+static void registerVector3Metatable(lua_State *L) {
+    luaL_newmetatable(L, VECTOR3_METATABLE);
+
+    lua_pushcfunction(L, lua_Vector3Add_mm);
+    lua_setfield(L, -2, "__add");
+
+    lua_pushcfunction(L, lua_Vector3Sub_mm);
+    lua_setfield(L, -2, "__sub");
+
+    lua_pushcfunction(L, lua_Vector3Mul_mm);
+    lua_setfield(L, -2, "__mul");
+
+    lua_pushcfunction(L, lua_Vector3Unm_mm);
+    lua_setfield(L, -2, "__unm");
+
+    lua_pushcfunction(L, lua_Vector3Eq_mm);
+    lua_setfield(L, -2, "__eq");
+
+    lua_pushcfunction(L, lua_Vector3ToString_mm);
+    lua_setfield(L, -2, "__tostring");
+
+    lua_newtable(L); // methods table, becomes __index
+    lua_pushcfunction(L, lua_Vector3Length_m);
+    lua_setfield(L, -2, "length");
+    lua_pushcfunction(L, lua_Vector3LengthSqr_m);
+    lua_setfield(L, -2, "lengthSqr");
+    lua_pushcfunction(L, lua_Vector3Normalize_m);
+    lua_setfield(L, -2, "normalize");
+    lua_pushcfunction(L, lua_Vector3Dot_m);
+    lua_setfield(L, -2, "dot");
+    lua_pushcfunction(L, lua_Vector3Cross_m);
+    lua_setfield(L, -2, "cross");
+    lua_pushcfunction(L, lua_Vector3Distance_m);
+    lua_setfield(L, -2, "distance");
+    lua_pushcfunction(L, lua_Vector3DistanceSqr_m);
+    lua_setfield(L, -2, "distanceSqr");
+    lua_pushcfunction(L, lua_Vector3Lerp_m);
+    lua_setfield(L, -2, "lerp");
+    lua_pushcfunction(L, lua_Vector3Angle_m);
+    lua_setfield(L, -2, "angle");
+    lua_pushcfunction(L, lua_Vector3Reflect_m);
+    lua_setfield(L, -2, "reflect");
+    lua_pushcfunction(L, lua_Vector3MoveTowards_m);
+    lua_setfield(L, -2, "moveTowards");
+    lua_pushcfunction(L, lua_Vector3Clamp_m);
+    lua_setfield(L, -2, "clamp");
+    lua_pushcfunction(L, lua_Vector3Invert_m);
+    lua_setfield(L, -2, "invert");
+    lua_pushcfunction(L, lua_Vector3RotateByAxisAngle_m);
+    lua_setfield(L, -2, "rotateByAxisAngle");
+    lua_pushcfunction(L, lua_Vector3Transform_m);
+    lua_setfield(L, -2, "transform");
+    lua_setfield(L, -2, "__index");
+
+    lua_pop(L, 1); // pop the metatable; it stays registered in the Lua registry
+}
+
+// ---- Vector4 constructor ----
+
+int lua_Vector4(lua_State *L) {
+    float x = (float)luaL_checknumber(L, 1);
+    float y = (float)luaL_checknumber(L, 2);
+    float z = (float)luaL_checknumber(L, 3);
+    float w = (float)luaL_checknumber(L, 4);
+    pushVector4(L, (Vector4){.x = x, .y = y, .z = z, .w = w});
+    return 1;
+}
+
+// ---- Vector4 operator metamethods ----
+
+int lua_Vector4Add_mm(lua_State *L) {
+    Vector4 a = lua_checkVector4(L, 1);
+    Vector4 b = lua_checkVector4(L, 2);
+    pushVector4(L, Vector4Add(a, b));
+    return 1;
+}
+
+int lua_Vector4Sub_mm(lua_State *L) {
+    Vector4 a = lua_checkVector4(L, 1);
+    Vector4 b = lua_checkVector4(L, 2);
+    pushVector4(L, Vector4Subtract(a, b));
+    return 1;
+}
+
+int lua_Vector4Mul_mm(lua_State *L) {
+    if (lua_type(L, 1) == LUA_TNUMBER) {
+        float   scalar = (float)lua_tonumber(L, 1);
+        Vector4 v      = lua_checkVector4(L, 2);
+        pushVector4(L, Vector4Scale(v, scalar));
+    } else if (lua_type(L, 2) == LUA_TNUMBER) {
+        Vector4 v      = lua_checkVector4(L, 1);
+        float   scalar = (float)lua_tonumber(L, 2);
+        pushVector4(L, Vector4Scale(v, scalar));
+    } else {
+        Vector4 a = lua_checkVector4(L, 1);
+        Vector4 b = lua_checkVector4(L, 2);
+        pushVector4(L, Vector4Multiply(a, b));
+    }
+    return 1;
+}
+
+int lua_Vector4Unm_mm(lua_State *L) {
+    Vector4 v = lua_checkVector4(L, 1);
+    pushVector4(L, Vector4Negate(v));
+    return 1;
+}
+
+int lua_Vector4Eq_mm(lua_State *L) {
+    Vector4 a = lua_checkVector4(L, 1);
+    Vector4 b = lua_checkVector4(L, 2);
+    lua_pushboolean(L, Vector4Equals(a, b));
+    return 1;
+}
+
+int lua_Vector4ToString_mm(lua_State *L) {
+    Vector4 v = lua_checkVector4(L, 1);
+    lua_pushfstring(L, "Vector4(%f, %f, %f, %f)", v.x, v.y, v.z, v.w);
+    return 1;
+}
+
+// ---- Vector4 methods (called as v:method(...)) ----
+
+int lua_Vector4Length_m(lua_State *L) {
+    Vector4 v = lua_checkVector4(L, 1);
+    lua_pushnumber(L, Vector4Length(v));
+    return 1;
+}
+
+int lua_Vector4LengthSqr_m(lua_State *L) {
+    Vector4 v = lua_checkVector4(L, 1);
+    lua_pushnumber(L, Vector4LengthSqr(v));
+    return 1;
+}
+
+int lua_Vector4Normalize_m(lua_State *L) {
+    Vector4 v = lua_checkVector4(L, 1);
+    pushVector4(L, Vector4Normalize(v));
+    return 1;
+}
+
+int lua_Vector4Dot_m(lua_State *L) {
+    Vector4 a = lua_checkVector4(L, 1);
+    Vector4 b = lua_checkVector4(L, 2);
+    lua_pushnumber(L, Vector4DotProduct(a, b));
+    return 1;
+}
+
+int lua_Vector4Distance_m(lua_State *L) {
+    Vector4 a = lua_checkVector4(L, 1);
+    Vector4 b = lua_checkVector4(L, 2);
+    lua_pushnumber(L, Vector4Distance(a, b));
+    return 1;
+}
+
+int lua_Vector4DistanceSqr_m(lua_State *L) {
+    Vector4 a = lua_checkVector4(L, 1);
+    Vector4 b = lua_checkVector4(L, 2);
+    lua_pushnumber(L, Vector4DistanceSqr(a, b));
+    return 1;
+}
+
+int lua_Vector4Lerp_m(lua_State *L) {
+    Vector4 a      = lua_checkVector4(L, 1);
+    Vector4 b      = lua_checkVector4(L, 2);
+    float   amount = (float)luaL_checknumber(L, 3);
+    pushVector4(L, Vector4Lerp(a, b, amount));
+    return 1;
+}
+
+int lua_Vector4MoveTowards_m(lua_State *L) {
+    Vector4 v           = lua_checkVector4(L, 1);
+    Vector4 target      = lua_checkVector4(L, 2);
+    float   maxDistance = (float)luaL_checknumber(L, 3);
+    pushVector4(L, Vector4MoveTowards(v, target, maxDistance));
+    return 1;
+}
+
+int lua_Vector4Invert_m(lua_State *L) {
+    Vector4 v = lua_checkVector4(L, 1);
+    pushVector4(L, Vector4Invert(v));
+    return 1;
+}
+
+static void registerVector4Metatable(lua_State *L) {
+    luaL_newmetatable(L, VECTOR4_METATABLE);
+
+    lua_pushcfunction(L, lua_Vector4Add_mm);
+    lua_setfield(L, -2, "__add");
+
+    lua_pushcfunction(L, lua_Vector4Sub_mm);
+    lua_setfield(L, -2, "__sub");
+
+    lua_pushcfunction(L, lua_Vector4Mul_mm);
+    lua_setfield(L, -2, "__mul");
+
+    lua_pushcfunction(L, lua_Vector4Unm_mm);
+    lua_setfield(L, -2, "__unm");
+
+    lua_pushcfunction(L, lua_Vector4Eq_mm);
+    lua_setfield(L, -2, "__eq");
+
+    lua_pushcfunction(L, lua_Vector4ToString_mm);
+    lua_setfield(L, -2, "__tostring");
+
+    lua_newtable(L); // methods table, becomes __index
+    lua_pushcfunction(L, lua_Vector4Length_m);
+    lua_setfield(L, -2, "length");
+    lua_pushcfunction(L, lua_Vector4LengthSqr_m);
+    lua_setfield(L, -2, "lengthSqr");
+    lua_pushcfunction(L, lua_Vector4Normalize_m);
+    lua_setfield(L, -2, "normalize");
+    lua_pushcfunction(L, lua_Vector4Dot_m);
+    lua_setfield(L, -2, "dot");
+    lua_pushcfunction(L, lua_Vector4Distance_m);
+    lua_setfield(L, -2, "distance");
+    lua_pushcfunction(L, lua_Vector4DistanceSqr_m);
+    lua_setfield(L, -2, "distanceSqr");
+    lua_pushcfunction(L, lua_Vector4Lerp_m);
+    lua_setfield(L, -2, "lerp");
+    lua_pushcfunction(L, lua_Vector4MoveTowards_m);
+    lua_setfield(L, -2, "moveTowards");
+    lua_pushcfunction(L, lua_Vector4Invert_m);
+    lua_setfield(L, -2, "invert");
+    lua_setfield(L, -2, "__index");
+
+    lua_pop(L, 1); // pop the metatable; it stays registered in the Lua registry
+}
+
+// ---- Matrix ----
+//
+// Exposed as transform-building functions (MatrixIdentity, MatrixTranslate,
+// ...) rather than methods -- this mirrors raylib's own Matrix* naming and
+// keeps scope to what's needed to build a transform for a shader uniform,
+// not a full linear-algebra toolkit.
+
+int lua_MatrixIdentity(lua_State *L) {
+    pushMatrix(L, MatrixIdentity());
+    return 1;
+}
+
+int lua_MatrixTranslate(lua_State *L) {
+    float x = (float)luaL_checknumber(L, 1);
+    float y = (float)luaL_checknumber(L, 2);
+    float z = (float)luaL_checknumber(L, 3);
+    pushMatrix(L, MatrixTranslate(x, y, z));
+    return 1;
+}
+
+int lua_MatrixScale(lua_State *L) {
+    float x = (float)luaL_checknumber(L, 1);
+    float y = (float)luaL_checknumber(L, 2);
+    float z = (float)luaL_checknumber(L, 3);
+    pushMatrix(L, MatrixScale(x, y, z));
+    return 1;
+}
+
+int lua_MatrixRotateX(lua_State *L) {
+    float angle = (float)luaL_checknumber(L, 1);
+    pushMatrix(L, MatrixRotateX(angle));
+    return 1;
+}
+
+int lua_MatrixRotateY(lua_State *L) {
+    float angle = (float)luaL_checknumber(L, 1);
+    pushMatrix(L, MatrixRotateY(angle));
+    return 1;
+}
+
+int lua_MatrixRotateZ(lua_State *L) {
+    float angle = (float)luaL_checknumber(L, 1);
+    pushMatrix(L, MatrixRotateZ(angle));
+    return 1;
+}
+
+int lua_MatrixRotate(lua_State *L) {
+    Vector3 axis  = lua_checkVector3(L, 1);
+    float   angle = (float)luaL_checknumber(L, 2);
+    pushMatrix(L, MatrixRotate(axis, angle));
+    return 1;
+}
+
+int lua_MatrixRotateXYZ(lua_State *L) {
+    Vector3 angle = lua_checkVector3(L, 1);
+    pushMatrix(L, MatrixRotateXYZ(angle));
+    return 1;
+}
+
+int lua_MatrixMultiply(lua_State *L) {
+    Matrix left  = lua_checkMatrix(L, 1);
+    Matrix right = lua_checkMatrix(L, 2);
+    pushMatrix(L, MatrixMultiply(left, right));
+    return 1;
+}
+
+int lua_MatrixTranspose(lua_State *L) {
+    Matrix mat = lua_checkMatrix(L, 1);
+    pushMatrix(L, MatrixTranspose(mat));
+    return 1;
+}
+
+int lua_MatrixMul_mm(lua_State *L) {
+    Matrix left  = lua_checkMatrix(L, 1);
+    Matrix right = lua_checkMatrix(L, 2);
+    pushMatrix(L, MatrixMultiply(left, right));
+    return 1;
+}
+
+int lua_MatrixToString_mm(lua_State *L) {
+    lua_checkMatrix(L, 1); // validate shape
+    lua_pushstring(L, "Matrix");
+    return 1;
+}
+
+static void registerMatrixMetatable(lua_State *L) {
+    luaL_newmetatable(L, MATRIX_METATABLE);
+
+    lua_pushcfunction(L, lua_MatrixMul_mm);
+    lua_setfield(L, -2, "__mul");
+
+    lua_pushcfunction(L, lua_MatrixToString_mm);
+    lua_setfield(L, -2, "__tostring");
 
     lua_pop(L, 1); // pop the metatable; it stays registered in the Lua registry
 }
@@ -1163,6 +2114,111 @@ int lua_UnloadTexture(lua_State *L) {
     Texture2D texture = lua_checkTexture2D(L, 1);
     UnloadTexture(texture);
     return 0;
+}
+
+// ---- CPU-side images ----
+
+int lua_LoadImage(lua_State *L) {
+    const char *fileName = luaL_checkstring(L, 1);
+    Image       image    = LoadImage(fileName);
+
+    Image *ud = (Image *)lua_newuserdata(L, sizeof(Image));
+    *ud       = image;
+    luaL_getmetatable(L, IMAGE_METATABLE);
+    lua_setmetatable(L, -2);
+    return 1;
+}
+
+int lua_UnloadImage(lua_State *L) {
+    Image *image = lua_checkImage(L, 1);
+    UnloadImage(*image);
+    return 0;
+}
+
+int lua_ExportImage(lua_State *L) {
+    Image      *image    = lua_checkImage(L, 1);
+    const char *fileName = luaL_checkstring(L, 2);
+    lua_pushboolean(L, ExportImage(*image, fileName));
+    return 1;
+}
+
+int lua_ImageResize(lua_State *L) {
+    Image *image     = lua_checkImage(L, 1);
+    int    newWidth  = (int)luaL_checkinteger(L, 2);
+    int    newHeight = (int)luaL_checkinteger(L, 3);
+    ImageResize(image, newWidth, newHeight);
+    return 0;
+}
+
+int lua_ImageCrop(lua_State *L) {
+    Image    *image = lua_checkImage(L, 1);
+    Rectangle crop  = lua_checkRectangle(L, 2);
+    ImageCrop(image, crop);
+    return 0;
+}
+
+int lua_ImageFlipVertical(lua_State *L) {
+    Image *image = lua_checkImage(L, 1);
+    ImageFlipVertical(image);
+    return 0;
+}
+
+int lua_ImageFlipHorizontal(lua_State *L) {
+    Image *image = lua_checkImage(L, 1);
+    ImageFlipHorizontal(image);
+    return 0;
+}
+
+int lua_ImageRotate(lua_State *L) {
+    Image *image   = lua_checkImage(L, 1);
+    int    degrees = (int)luaL_checkinteger(L, 2);
+    ImageRotate(image, degrees);
+    return 0;
+}
+
+int lua_GetImageColor(lua_State *L) {
+    Image *image = lua_checkImage(L, 1);
+    int    x     = (int)luaL_checkinteger(L, 2);
+    int    y     = (int)luaL_checkinteger(L, 3);
+    pushColor(L, GetImageColor(*image, x, y));
+    return 1;
+}
+
+int lua_ImageDrawPixel(lua_State *L) {
+    Image *image = lua_checkImage(L, 1);
+    int    posX  = (int)luaL_checkinteger(L, 2);
+    int    posY  = (int)luaL_checkinteger(L, 3);
+    Color  color = lua_checkColor(L, 4);
+    ImageDrawPixel(image, posX, posY, color);
+    return 0;
+}
+
+int lua_ImageDrawCircle(lua_State *L) {
+    Image *image   = lua_checkImage(L, 1);
+    int    centerX = (int)luaL_checkinteger(L, 2);
+    int    centerY = (int)luaL_checkinteger(L, 3);
+    int    radius  = (int)luaL_checkinteger(L, 4);
+    Color  color   = lua_checkColor(L, 5);
+    ImageDrawCircle(image, centerX, centerY, radius, color);
+    return 0;
+}
+
+int lua_ImageDrawRectangle(lua_State *L) {
+    Image *image  = lua_checkImage(L, 1);
+    int    posX   = (int)luaL_checkinteger(L, 2);
+    int    posY   = (int)luaL_checkinteger(L, 3);
+    int    width  = (int)luaL_checkinteger(L, 4);
+    int    height = (int)luaL_checkinteger(L, 5);
+    Color  color  = lua_checkColor(L, 6);
+    ImageDrawRectangle(image, posX, posY, width, height, color);
+    return 0;
+}
+
+int lua_LoadTextureFromImage(lua_State *L) {
+    Image    *image   = lua_checkImage(L, 1);
+    Texture2D texture = LoadTextureFromImage(*image);
+    pushTexture2D(L, texture);
+    return 1;
 }
 
 int lua_DrawTexture(lua_State *L) {
@@ -1215,12 +2271,12 @@ int lua_DrawTexturePro(lua_State *L) {
 // ---- Render textures ----
 
 int lua_LoadRenderTexture(lua_State *L) {
-    int              width  = (int)luaL_checkinteger(L, 1);
-    int              height = (int)luaL_checkinteger(L, 2);
-    RenderTexture2D  target = LoadRenderTexture(width, height);
+    int             width  = (int)luaL_checkinteger(L, 1);
+    int             height = (int)luaL_checkinteger(L, 2);
+    RenderTexture2D target = LoadRenderTexture(width, height);
 
-    RenderTexture2D *ud = (RenderTexture2D *)lua_newuserdata(
-        L, sizeof(RenderTexture2D));
+    RenderTexture2D *ud =
+        (RenderTexture2D *)lua_newuserdata(L, sizeof(RenderTexture2D));
     *ud = target;
     luaL_getmetatable(L, RENDERTEXTURE2D_METATABLE);
     lua_setmetatable(L, -2);
@@ -1244,18 +2300,145 @@ int lua_EndTextureMode(lua_State *L) {
     return 0;
 }
 
+// ---- Shaders ----
+//
+// Uniform setters are split into typed helpers (Float/Vec2/Int/Texture)
+// rather than one generic SetShaderValue(shader, loc, value, type) -- this
+// project's shaders only need float/vec2/int/sampler2D uniforms, so there's
+// no need to push raylib's SHADER_UNIFORM_* type constants into Lua or
+// marshal an arbitrary value based on one.
+
+int lua_LoadShader(lua_State *L) {
+    const char *vsFileName =
+        lua_isnil(L, 1) ? NULL : luaL_checkstring(L, 1);
+    const char *fsFileName =
+        lua_isnil(L, 2) ? NULL : luaL_checkstring(L, 2);
+    Shader shader = LoadShader(vsFileName, fsFileName);
+
+    Shader *ud = (Shader *)lua_newuserdata(L, sizeof(Shader));
+    *ud        = shader;
+    luaL_getmetatable(L, SHADER_METATABLE);
+    lua_setmetatable(L, -2);
+    return 1;
+}
+
+int lua_UnloadShader(lua_State *L) {
+    Shader *shader = lua_checkShader(L, 1);
+    UnloadShader(*shader);
+    return 0;
+}
+
+int lua_IsShaderValid(lua_State *L) {
+    Shader *shader = lua_checkShader(L, 1);
+    lua_pushboolean(L, IsShaderValid(*shader));
+    return 1;
+}
+
+int lua_GetShaderLocation(lua_State *L) {
+    Shader     *shader      = lua_checkShader(L, 1);
+    const char *uniformName = luaL_checkstring(L, 2);
+    lua_pushinteger(L, GetShaderLocation(*shader, uniformName));
+    return 1;
+}
+
+int lua_GetShaderLocationAttrib(lua_State *L) {
+    Shader     *shader     = lua_checkShader(L, 1);
+    const char *attribName = luaL_checkstring(L, 2);
+    lua_pushinteger(L, GetShaderLocationAttrib(*shader, attribName));
+    return 1;
+}
+
+int lua_SetShaderValueFloat(lua_State *L) {
+    Shader *shader = lua_checkShader(L, 1);
+    int     loc    = (int)luaL_checkinteger(L, 2);
+    float   value  = (float)luaL_checknumber(L, 3);
+    SetShaderValue(*shader, loc, &value, SHADER_UNIFORM_FLOAT);
+    return 0;
+}
+
+int lua_SetShaderValueVec2(lua_State *L) {
+    Shader *shader = lua_checkShader(L, 1);
+    int     loc    = (int)luaL_checkinteger(L, 2);
+    float   value[2];
+    value[0] = (float)luaL_checknumber(L, 3);
+    value[1] = (float)luaL_checknumber(L, 4);
+    SetShaderValue(*shader, loc, value, SHADER_UNIFORM_VEC2);
+    return 0;
+}
+
+int lua_SetShaderValueVec3(lua_State *L) {
+    Shader *shader = lua_checkShader(L, 1);
+    int     loc    = (int)luaL_checkinteger(L, 2);
+    Vector3 vec    = lua_checkVector3(L, 3);
+    float   value[3];
+    value[0] = vec.x;
+    value[1] = vec.y;
+    value[2] = vec.z;
+    SetShaderValue(*shader, loc, value, SHADER_UNIFORM_VEC3);
+    return 0;
+}
+
+int lua_SetShaderValueVec4(lua_State *L) {
+    Shader *shader = lua_checkShader(L, 1);
+    int     loc    = (int)luaL_checkinteger(L, 2);
+    Vector4 vec    = lua_checkVector4(L, 3);
+    float   value[4];
+    value[0] = vec.x;
+    value[1] = vec.y;
+    value[2] = vec.z;
+    value[3] = vec.w;
+    SetShaderValue(*shader, loc, value, SHADER_UNIFORM_VEC4);
+    return 0;
+}
+
+int lua_SetShaderValueInt(lua_State *L) {
+    Shader *shader = lua_checkShader(L, 1);
+    int     loc    = (int)luaL_checkinteger(L, 2);
+    int     value  = (int)luaL_checkinteger(L, 3);
+    SetShaderValue(*shader, loc, &value, SHADER_UNIFORM_INT);
+    return 0;
+}
+
+int lua_SetShaderValueMatrix(lua_State *L) {
+    Shader *shader = lua_checkShader(L, 1);
+    int     loc    = (int)luaL_checkinteger(L, 2);
+    Matrix  mat    = lua_checkMatrix(L, 3);
+    SetShaderValueMatrix(*shader, loc, mat);
+    return 0;
+}
+
+int lua_SetShaderValueTexture(lua_State *L) {
+    Shader   *shader  = lua_checkShader(L, 1);
+    int       loc     = (int)luaL_checkinteger(L, 2);
+    Texture2D texture = lua_checkTexture2D(L, 3);
+    SetShaderValueTexture(*shader, loc, texture);
+    return 0;
+}
+
+int lua_BeginShaderMode(lua_State *L) {
+    Shader *shader = lua_checkShader(L, 1);
+    BeginShaderMode(*shader);
+    return 0;
+}
+
+int lua_EndShaderMode(lua_State *L) {
+    EndShaderMode();
+    return 0;
+}
+
 int lua_Camera2D(lua_State *L) {
     Vector2 offset   = lua_checkVector2(L, 1);
     Vector2 target   = lua_checkVector2(L, 2);
     float   rotation = (float)luaL_optnumber(L, 3, 0);
     float   zoom     = (float)luaL_optnumber(L, 4, 1);
 
-    pushCamera2D(L, (Camera2D){
-                         .offset = offset,
-                         .target = target,
-                         .rotation = rotation,
-                         .zoom = zoom,
-                     });
+    pushCamera2D(L,
+                 (Camera2D){
+                     .offset   = offset,
+                     .target   = target,
+                     .rotation = rotation,
+                     .zoom     = zoom,
+                 });
     return 1;
 }
 
@@ -1346,6 +2529,77 @@ int lua_GetMonitorHeight(lua_State *L) {
     return 1;
 }
 
+int lua_SetWindowPosition(lua_State *L) {
+    int x = (int)luaL_checkinteger(L, 1);
+    int y = (int)luaL_checkinteger(L, 2);
+    SetWindowPosition(x, y);
+    return 0;
+}
+
+int lua_GetWindowPosition(lua_State *L) {
+    pushVector2(L, GetWindowPosition());
+    return 1;
+}
+
+int lua_SetWindowMinSize(lua_State *L) {
+    int width  = (int)luaL_checkinteger(L, 1);
+    int height = (int)luaL_checkinteger(L, 2);
+    SetWindowMinSize(width, height);
+    return 0;
+}
+
+int lua_SetWindowMaxSize(lua_State *L) {
+    int width  = (int)luaL_checkinteger(L, 1);
+    int height = (int)luaL_checkinteger(L, 2);
+    SetWindowMaxSize(width, height);
+    return 0;
+}
+
+int lua_SetWindowOpacity(lua_State *L) {
+    float opacity = (float)luaL_checknumber(L, 1);
+    SetWindowOpacity(opacity);
+    return 0;
+}
+
+int lua_GetWindowScaleDPI(lua_State *L) {
+    pushVector2(L, GetWindowScaleDPI());
+    return 1;
+}
+
+int lua_GetMonitorName(lua_State *L) {
+    int         monitor = (int)luaL_checkinteger(L, 1);
+    const char *name    = GetMonitorName(monitor);
+    if (name == NULL) {
+        lua_pushnil(L);
+    } else {
+        lua_pushstring(L, name);
+    }
+    return 1;
+}
+
+int lua_GetMonitorCount(lua_State *L) {
+    lua_pushinteger(L, GetMonitorCount());
+    return 1;
+}
+
+int lua_GetMonitorPosition(lua_State *L) {
+    int monitor = (int)luaL_checkinteger(L, 1);
+    pushVector2(L, GetMonitorPosition(monitor));
+    return 1;
+}
+
+int lua_GetMonitorRefreshRate(lua_State *L) {
+    int monitor = (int)luaL_checkinteger(L, 1);
+    lua_pushinteger(L, GetMonitorRefreshRate(monitor));
+    return 1;
+}
+
+int lua_TakeScreenshot(lua_State *L) {
+    const char *fileName = luaL_checkstring(L, 1);
+    TakeScreenshot(fileName);
+    return 0;
+}
+
 int lua_GetFPS(lua_State *L) {
     lua_pushinteger(L, GetFPS());
     return 1;
@@ -1364,10 +2618,48 @@ int lua_GetRandomValue(lua_State *L) {
     return 1;
 }
 
+// ---- Filesystem ----
+
+int lua_FileExists(lua_State *L) {
+    const char *fileName = luaL_checkstring(L, 1);
+    lua_pushboolean(L, FileExists(fileName));
+    return 1;
+}
+
+int lua_DirectoryExists(lua_State *L) {
+    const char *dirPath = luaL_checkstring(L, 1);
+    lua_pushboolean(L, DirectoryExists(dirPath));
+    return 1;
+}
+
+// Returned as a normal Lua string (copied and immediately freed via
+// UnloadFileText) rather than exposing LoadFileText/UnloadFileText
+// separately -- there's no C-owned buffer for Lua code to have to manage.
+int lua_LoadFileText(lua_State *L) {
+    const char *fileName = luaL_checkstring(L, 1);
+    char       *text     = LoadFileText(fileName);
+    if (text == NULL) {
+        lua_pushnil(L);
+    } else {
+        lua_pushstring(L, text);
+        UnloadFileText(text);
+    }
+    return 1;
+}
+
+int lua_SaveFileText(lua_State *L) {
+    const char *fileName = luaL_checkstring(L, 1);
+    const char *text     = luaL_checkstring(L, 2);
+    lua_pushboolean(L, SaveFileText(fileName, text));
+    return 1;
+}
+
+// Registers a raylib binding as a bare global (InitWindow, DrawText, ...)
+// instead of a field on an "rl" namespace table -- there is no "rl" table.
 #define pushLuaFunction(state, func, name)                                     \
     do {                                                                       \
         lua_pushcfunction((state), (func));                                    \
-        lua_setfield((state), -2, (name));                                     \
+        lua_setglobal((state), (name));                                        \
     } while (0)
 
 void pushLuaFunctions(lua_State *L) {
@@ -1377,10 +2669,14 @@ void pushLuaFunctions(lua_State *L) {
     lua_pop(L, 1);
     luaL_newmetatable(L, FONT_METATABLE);
     lua_pop(L, 1);
+    luaL_newmetatable(L, SHADER_METATABLE);
+    lua_pop(L, 1);
     registerRenderTexture2DMetatable(L);
+    registerImageMetatable(L);
     registerVector2Metatable(L);
-
-    lua_newtable(L); // rl
+    registerVector3Metatable(L);
+    registerVector4Metatable(L);
+    registerMatrixMetatable(L);
 
     // functions
     pushLuaFunction(L, lua_InitWindow, "InitWindow");
@@ -1410,12 +2706,27 @@ void pushLuaFunctions(lua_State *L) {
     pushLuaFunction(L, lua_IsMouseButtonReleased, "IsMouseButtonReleased");
     pushLuaFunction(L, lua_GetMousePosition, "GetMousePosition");
     pushLuaFunction(L, lua_GetMouseWheelMove, "GetMouseWheelMove");
+    pushLuaFunction(L, lua_ShowCursor, "ShowCursor");
+    pushLuaFunction(L, lua_HideCursor, "HideCursor");
+    pushLuaFunction(L, lua_IsCursorHidden, "IsCursorHidden");
+    pushLuaFunction(L, lua_EnableCursor, "EnableCursor");
+    pushLuaFunction(L, lua_DisableCursor, "DisableCursor");
+    pushLuaFunction(L, lua_IsCursorOnScreen, "IsCursorOnScreen");
+    pushLuaFunction(L, lua_GetMouseDelta, "GetMouseDelta");
+    pushLuaFunction(L, lua_SetMousePosition, "SetMousePosition");
+    pushLuaFunction(L, lua_SetMouseOffset, "SetMouseOffset");
+    pushLuaFunction(L, lua_SetMouseScale, "SetMouseScale");
+    pushLuaFunction(L, lua_SetMouseCursor, "SetMouseCursor");
+    pushLuaFunction(L, lua_GetKeyPressed, "GetKeyPressed");
+    pushLuaFunction(L, lua_GetCharPressed, "GetCharPressed");
+    pushLuaFunction(L, lua_SetExitKey, "SetExitKey");
+    pushLuaFunction(L, lua_GetClipboardText, "GetClipboardText");
+    pushLuaFunction(L, lua_SetClipboardText, "SetClipboardText");
     pushLuaFunction(L, lua_IsGamepadAvailable, "IsGamepadAvailable");
     pushLuaFunction(L, lua_GetGamepadName, "GetGamepadName");
     pushLuaFunction(L, lua_IsGamepadButtonDown, "IsGamepadButtonDown");
     pushLuaFunction(L, lua_IsGamepadButtonPressed, "IsGamepadButtonPressed");
-    pushLuaFunction(
-        L, lua_IsGamepadButtonReleased, "IsGamepadButtonReleased");
+    pushLuaFunction(L, lua_IsGamepadButtonReleased, "IsGamepadButtonReleased");
     pushLuaFunction(L, lua_IsGamepadButtonUp, "IsGamepadButtonUp");
     pushLuaFunction(L, lua_GetGamepadAxisCount, "GetGamepadAxisCount");
     pushLuaFunction(L, lua_GetGamepadAxisMovement, "GetGamepadAxisMovement");
@@ -1428,6 +2739,8 @@ void pushLuaFunctions(lua_State *L) {
     pushLuaFunction(L, lua_StopSound, "StopSound");
     pushLuaFunction(L, lua_IsSoundPlaying, "IsSoundPlaying");
     pushLuaFunction(L, lua_SetSoundVolume, "SetSoundVolume");
+    pushLuaFunction(L, lua_SetSoundPitch, "SetSoundPitch");
+    pushLuaFunction(L, lua_SetSoundPan, "SetSoundPan");
     pushLuaFunction(L, lua_LoadMusicStream, "LoadMusicStream");
     pushLuaFunction(L, lua_UnloadMusicStream, "UnloadMusicStream");
     pushLuaFunction(L, lua_PlayMusicStream, "PlayMusicStream");
@@ -1437,10 +2750,28 @@ void pushLuaFunctions(lua_State *L) {
     pushLuaFunction(L, lua_ResumeMusicStream, "ResumeMusicStream");
     pushLuaFunction(L, lua_IsMusicStreamPlaying, "IsMusicStreamPlaying");
     pushLuaFunction(L, lua_SetMusicVolume, "SetMusicVolume");
+    pushLuaFunction(L, lua_SetMusicPitch, "SetMusicPitch");
+    pushLuaFunction(L, lua_SetMusicPan, "SetMusicPan");
+    pushLuaFunction(L, lua_GetMusicTimeLength, "GetMusicTimeLength");
+    pushLuaFunction(L, lua_GetMusicTimePlayed, "GetMusicTimePlayed");
+    pushLuaFunction(L, lua_SeekMusicStream, "SeekMusicStream");
     pushLuaFunction(L, lua_Lerp, "Lerp");
     pushLuaFunction(L, lua_Clamp, "Clamp");
     pushLuaFunction(L, lua_LoadTexture, "LoadTexture");
     pushLuaFunction(L, lua_UnloadTexture, "UnloadTexture");
+    pushLuaFunction(L, lua_LoadImage, "LoadImage");
+    pushLuaFunction(L, lua_UnloadImage, "UnloadImage");
+    pushLuaFunction(L, lua_ExportImage, "ExportImage");
+    pushLuaFunction(L, lua_ImageResize, "ImageResize");
+    pushLuaFunction(L, lua_ImageCrop, "ImageCrop");
+    pushLuaFunction(L, lua_ImageFlipVertical, "ImageFlipVertical");
+    pushLuaFunction(L, lua_ImageFlipHorizontal, "ImageFlipHorizontal");
+    pushLuaFunction(L, lua_ImageRotate, "ImageRotate");
+    pushLuaFunction(L, lua_GetImageColor, "GetImageColor");
+    pushLuaFunction(L, lua_ImageDrawPixel, "ImageDrawPixel");
+    pushLuaFunction(L, lua_ImageDrawCircle, "ImageDrawCircle");
+    pushLuaFunction(L, lua_ImageDrawRectangle, "ImageDrawRectangle");
+    pushLuaFunction(L, lua_LoadTextureFromImage, "LoadTextureFromImage");
     pushLuaFunction(L, lua_DrawTexture, "DrawTexture");
     pushLuaFunction(L, lua_DrawTextureV, "DrawTextureV");
     pushLuaFunction(L, lua_DrawTextureEx, "DrawTextureEx");
@@ -1450,6 +2781,21 @@ void pushLuaFunctions(lua_State *L) {
     pushLuaFunction(L, lua_UnloadRenderTexture, "UnloadRenderTexture");
     pushLuaFunction(L, lua_BeginTextureMode, "BeginTextureMode");
     pushLuaFunction(L, lua_EndTextureMode, "EndTextureMode");
+    pushLuaFunction(L, lua_LoadShader, "LoadShader");
+    pushLuaFunction(L, lua_UnloadShader, "UnloadShader");
+    pushLuaFunction(L, lua_IsShaderValid, "IsShaderValid");
+    pushLuaFunction(L, lua_GetShaderLocation, "GetShaderLocation");
+    pushLuaFunction(
+        L, lua_GetShaderLocationAttrib, "GetShaderLocationAttrib");
+    pushLuaFunction(L, lua_SetShaderValueFloat, "SetShaderValueFloat");
+    pushLuaFunction(L, lua_SetShaderValueVec2, "SetShaderValueVec2");
+    pushLuaFunction(L, lua_SetShaderValueVec3, "SetShaderValueVec3");
+    pushLuaFunction(L, lua_SetShaderValueVec4, "SetShaderValueVec4");
+    pushLuaFunction(L, lua_SetShaderValueInt, "SetShaderValueInt");
+    pushLuaFunction(L, lua_SetShaderValueTexture, "SetShaderValueTexture");
+    pushLuaFunction(L, lua_SetShaderValueMatrix, "SetShaderValueMatrix");
+    pushLuaFunction(L, lua_BeginShaderMode, "BeginShaderMode");
+    pushLuaFunction(L, lua_EndShaderMode, "EndShaderMode");
     pushLuaFunction(L, lua_Camera2D, "Camera2D");
     pushLuaFunction(L, lua_BeginMode2D, "BeginMode2D");
     pushLuaFunction(L, lua_EndMode2D, "EndMode2D");
@@ -1473,14 +2819,41 @@ void pushLuaFunctions(lua_State *L) {
     pushLuaFunction(L, lua_GetCurrentMonitor, "GetCurrentMonitor");
     pushLuaFunction(L, lua_GetMonitorWidth, "GetMonitorWidth");
     pushLuaFunction(L, lua_GetMonitorHeight, "GetMonitorHeight");
+    pushLuaFunction(L, lua_SetWindowPosition, "SetWindowPosition");
+    pushLuaFunction(L, lua_GetWindowPosition, "GetWindowPosition");
+    pushLuaFunction(L, lua_SetWindowMinSize, "SetWindowMinSize");
+    pushLuaFunction(L, lua_SetWindowMaxSize, "SetWindowMaxSize");
+    pushLuaFunction(L, lua_SetWindowOpacity, "SetWindowOpacity");
+    pushLuaFunction(L, lua_GetWindowScaleDPI, "GetWindowScaleDPI");
+    pushLuaFunction(L, lua_GetMonitorName, "GetMonitorName");
+    pushLuaFunction(L, lua_GetMonitorCount, "GetMonitorCount");
+    pushLuaFunction(L, lua_GetMonitorPosition, "GetMonitorPosition");
+    pushLuaFunction(L, lua_GetMonitorRefreshRate, "GetMonitorRefreshRate");
+    pushLuaFunction(L, lua_TakeScreenshot, "TakeScreenshot");
     pushLuaFunction(L, lua_GetFPS, "GetFPS");
     pushLuaFunction(L, lua_SetRandomSeed, "SetRandomSeed");
     pushLuaFunction(L, lua_GetRandomValue, "GetRandomValue");
+    pushLuaFunction(L, lua_FileExists, "FileExists");
+    pushLuaFunction(L, lua_DirectoryExists, "DirectoryExists");
+    pushLuaFunction(L, lua_LoadFileText, "LoadFileText");
+    pushLuaFunction(L, lua_SaveFileText, "SaveFileText");
 
     // classes
     pushLuaFunction(L, lua_Color, "Color");
     pushLuaFunction(L, lua_Vector2, "Vector2");
+    pushLuaFunction(L, lua_Vector3, "Vector3");
+    pushLuaFunction(L, lua_Vector4, "Vector4");
     pushLuaFunction(L, lua_Rectangle, "Rectangle");
+    pushLuaFunction(L, lua_MatrixIdentity, "MatrixIdentity");
+    pushLuaFunction(L, lua_MatrixTranslate, "MatrixTranslate");
+    pushLuaFunction(L, lua_MatrixScale, "MatrixScale");
+    pushLuaFunction(L, lua_MatrixRotateX, "MatrixRotateX");
+    pushLuaFunction(L, lua_MatrixRotateY, "MatrixRotateY");
+    pushLuaFunction(L, lua_MatrixRotateZ, "MatrixRotateZ");
+    pushLuaFunction(L, lua_MatrixRotate, "MatrixRotate");
+    pushLuaFunction(L, lua_MatrixRotateXYZ, "MatrixRotateXYZ");
+    pushLuaFunction(L, lua_MatrixMultiply, "MatrixMultiply");
+    pushLuaFunction(L, lua_MatrixTranspose, "MatrixTranspose");
     pushLuaFunction(L, lua_DrawCircleV, "DrawCircleV");
     pushLuaFunction(L, lua_DrawRectangleRec, "DrawRectangleRec");
     pushLuaFunction(L, lua_DrawRectanglePro, "DrawRectanglePro");
@@ -1488,7 +2861,8 @@ void pushLuaFunctions(lua_State *L) {
     pushLuaFunction(L, lua_CheckCollisionCircles, "CheckCollisionCircles");
     pushLuaFunction(L, lua_CheckCollisionPointRec, "CheckCollisionPointRec");
     pushLuaFunction(L, lua_CheckCollisionCircleRec, "CheckCollisionCircleRec");
-    pushLuaFunction(L, lua_CheckCollisionPointCircle, "CheckCollisionPointCircle");
+    pushLuaFunction(
+        L, lua_CheckCollisionPointCircle, "CheckCollisionPointCircle");
     pushLuaFunction(
         L, lua_CheckCollisionPointTriangle, "CheckCollisionPointTriangle");
     pushLuaFunction(L, lua_GetCollisionRec, "GetCollisionRec");
@@ -1507,8 +2881,12 @@ void pushLuaFunctions(lua_State *L) {
     pushLuaFunction(L, lua_DrawTriangleLines, "DrawTriangleLines");
     pushLuaFunction(L, lua_DrawPoly, "DrawPoly");
     pushLuaFunction(L, lua_DrawPolyLines, "DrawPolyLines");
-
-    lua_setglobal(L, "rl");
+    pushLuaFunction(L, lua_DrawSplineLinear, "DrawSplineLinear");
+    pushLuaFunction(L, lua_DrawSplineBasis, "DrawSplineBasis");
+    pushLuaFunction(L, lua_DrawSplineCatmullRom, "DrawSplineCatmullRom");
+    pushLuaFunction(
+        L, lua_DrawSplineBezierQuadratic, "DrawSplineBezierQuadratic");
+    pushLuaFunction(L, lua_DrawSplineBezierCubic, "DrawSplineBezierCubic");
 
     // Color constants
     pushColorGlobal(L, LIGHTGRAY);
@@ -1637,4 +3015,17 @@ void pushLuaFunctions(lua_State *L) {
     pushIntGlobal(L, GAMEPAD_AXIS_RIGHT_Y);
     pushIntGlobal(L, GAMEPAD_AXIS_LEFT_TRIGGER);
     pushIntGlobal(L, GAMEPAD_AXIS_RIGHT_TRIGGER);
+
+    // Mouse cursor constants
+    pushIntGlobal(L, MOUSE_CURSOR_DEFAULT);
+    pushIntGlobal(L, MOUSE_CURSOR_ARROW);
+    pushIntGlobal(L, MOUSE_CURSOR_IBEAM);
+    pushIntGlobal(L, MOUSE_CURSOR_CROSSHAIR);
+    pushIntGlobal(L, MOUSE_CURSOR_POINTING_HAND);
+    pushIntGlobal(L, MOUSE_CURSOR_RESIZE_EW);
+    pushIntGlobal(L, MOUSE_CURSOR_RESIZE_NS);
+    pushIntGlobal(L, MOUSE_CURSOR_RESIZE_NWSE);
+    pushIntGlobal(L, MOUSE_CURSOR_RESIZE_NESW);
+    pushIntGlobal(L, MOUSE_CURSOR_RESIZE_ALL);
+    pushIntGlobal(L, MOUSE_CURSOR_NOT_ALLOWED);
 }

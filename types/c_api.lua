@@ -1,8 +1,5 @@
 ---@meta
 
----@class rl
-rl = {}
-
 ---@class Color
 ---@field r number
 ---@field g number
@@ -27,6 +24,73 @@ rl = {}
 ---@field moveTowards fun(self: Vector2, target: Vector2, maxDistance: number): Vector2
 ---@field clamp fun(self: Vector2, min: Vector2, max: Vector2): Vector2
 ---@field invert fun(self: Vector2): Vector2
+---@field lengthSqr fun(self: Vector2): number
+---@field distanceSqr fun(self: Vector2, other: Vector2): number
+---@field lineAngle fun(self: Vector2, other: Vector2): number
+---@field cross fun(self: Vector2, other: Vector2): number
+---@field refract fun(self: Vector2, normal: Vector2, ratio: number): Vector2
+
+---@class Vector3
+---@field x number
+---@field y number
+---@field z number
+---@operator add(Vector3): Vector3
+---@operator sub(Vector3): Vector3
+---@operator mul(number|Vector3): Vector3
+---@operator unm(): Vector3
+---@field length fun(self: Vector3): number
+---@field lengthSqr fun(self: Vector3): number
+---@field normalize fun(self: Vector3): Vector3
+---@field dot fun(self: Vector3, other: Vector3): number
+---@field cross fun(self: Vector3, other: Vector3): Vector3
+---@field distance fun(self: Vector3, other: Vector3): number
+---@field distanceSqr fun(self: Vector3, other: Vector3): number
+---@field lerp fun(self: Vector3, other: Vector3, amount: number): Vector3
+---@field angle fun(self: Vector3, other: Vector3): number
+---@field reflect fun(self: Vector3, normal: Vector3): Vector3
+---@field moveTowards fun(self: Vector3, target: Vector3, maxDistance: number): Vector3
+---@field clamp fun(self: Vector3, min: Vector3, max: Vector3): Vector3
+---@field invert fun(self: Vector3): Vector3
+---@field rotateByAxisAngle fun(self: Vector3, axis: Vector3, angle: number): Vector3
+---@field transform fun(self: Vector3, mat: Matrix): Vector3
+
+---@class Vector4
+---@field x number
+---@field y number
+---@field z number
+---@field w number
+---@operator add(Vector4): Vector4
+---@operator sub(Vector4): Vector4
+---@operator mul(number|Vector4): Vector4
+---@operator unm(): Vector4
+---@field length fun(self: Vector4): number
+---@field lengthSqr fun(self: Vector4): number
+---@field normalize fun(self: Vector4): Vector4
+---@field dot fun(self: Vector4, other: Vector4): number
+---@field distance fun(self: Vector4, other: Vector4): number
+---@field distanceSqr fun(self: Vector4, other: Vector4): number
+---@field lerp fun(self: Vector4, other: Vector4, amount: number): Vector4
+---@field moveTowards fun(self: Vector4, target: Vector4, maxDistance: number): Vector4
+---@field invert fun(self: Vector4): Vector4
+
+---@class Matrix
+---@field m0 number
+---@field m1 number
+---@field m2 number
+---@field m3 number
+---@field m4 number
+---@field m5 number
+---@field m6 number
+---@field m7 number
+---@field m8 number
+---@field m9 number
+---@field m10 number
+---@field m11 number
+---@field m12 number
+---@field m13 number
+---@field m14 number
+---@field m15 number
+---@operator mul(Matrix): Matrix
 
 ---@class Rectangle
 ---@field x number
@@ -58,24 +122,90 @@ rl = {}
 ---@field texture Texture2D
 ---@field depth Texture2D
 
+---@class Image
+---@field width integer
+---@field height integer
+---@field mipmaps integer
+---@field format integer
+
+---@class Shader
+
 ---@param r number
 ---@param g number
 ---@param b number
 ---@param a? number
 ---@return Color
-function rl.Color(r, g, b, a) end
+function Color(r, g, b, a) end
 
 ---@param x number
 ---@param y number
 ---@return Vector2
-function rl.Vector2(x, y) end
+function Vector2(x, y) end
+
+---@param x number
+---@param y number
+---@param z number
+---@return Vector3
+function Vector3(x, y, z) end
+
+---@param x number
+---@param y number
+---@param z number
+---@param w number
+---@return Vector4
+function Vector4(x, y, z, w) end
 
 ---@param x number
 ---@param y number
 ---@param width number
 ---@param height number
 ---@return Rectangle
-function rl.Rectangle(x, y, width, height) end
+function Rectangle(x, y, width, height) end
+
+---@return Matrix
+function MatrixIdentity() end
+
+---@param x number
+---@param y number
+---@param z number
+---@return Matrix
+function MatrixTranslate(x, y, z) end
+
+---@param x number
+---@param y number
+---@param z number
+---@return Matrix
+function MatrixScale(x, y, z) end
+
+---@param angle number
+---@return Matrix
+function MatrixRotateX(angle) end
+
+---@param angle number
+---@return Matrix
+function MatrixRotateY(angle) end
+
+---@param angle number
+---@return Matrix
+function MatrixRotateZ(angle) end
+
+---@param axis Vector3
+---@param angle number
+---@return Matrix
+function MatrixRotate(axis, angle) end
+
+---@param angle Vector3
+---@return Matrix
+function MatrixRotateXYZ(angle) end
+
+---@param left Matrix
+---@param right Matrix
+---@return Matrix
+function MatrixMultiply(left, right) end
+
+---@param mat Matrix
+---@return Matrix
+function MatrixTranspose(mat) end
 
 ---@type Color
 LIGHTGRAY = nil
@@ -318,114 +448,137 @@ GAMEPAD_AXIS_LEFT_TRIGGER = nil
 ---@type integer
 GAMEPAD_AXIS_RIGHT_TRIGGER = nil
 
+---@type integer
+MOUSE_CURSOR_DEFAULT = nil
+---@type integer
+MOUSE_CURSOR_ARROW = nil
+---@type integer
+MOUSE_CURSOR_IBEAM = nil
+---@type integer
+MOUSE_CURSOR_CROSSHAIR = nil
+---@type integer
+MOUSE_CURSOR_POINTING_HAND = nil
+---@type integer
+MOUSE_CURSOR_RESIZE_EW = nil
+---@type integer
+MOUSE_CURSOR_RESIZE_NS = nil
+---@type integer
+MOUSE_CURSOR_RESIZE_NWSE = nil
+---@type integer
+MOUSE_CURSOR_RESIZE_NESW = nil
+---@type integer
+MOUSE_CURSOR_RESIZE_ALL = nil
+---@type integer
+MOUSE_CURSOR_NOT_ALLOWED = nil
+
 ---@param color Color
-function rl.ClearBackground(color) end
+function ClearBackground(color) end
 
 ---@param x number
 ---@param y number
 ---@param color Color
-function rl.DrawPixel(x, y, color) end
+function DrawPixel(x, y, color) end
 
 ---@param x1 number
 ---@param y1 number
 ---@param x2 number
 ---@param y2 number
 ---@param color Color
-function rl.DrawLine(x1, y1, x2, y2, color) end
+function DrawLine(x1, y1, x2, y2, color) end
 
 ---@param centerX number
 ---@param centerY number
 ---@param radius number
 ---@param color Color
-function rl.DrawCircle(centerX, centerY, radius, color) end
+function DrawCircle(centerX, centerY, radius, color) end
 
 ---@param centerX number
 ---@param centerY number
 ---@param radius number
 ---@param color Color
-function rl.DrawCircleLines(centerX, centerY, radius, color) end
+function DrawCircleLines(centerX, centerY, radius, color) end
 
 ---@param x number
 ---@param y number
 ---@param width number
 ---@param height number
 ---@param color Color
-function rl.DrawRectangle(x, y, width, height, color) end
+function DrawRectangle(x, y, width, height, color) end
 
 ---@param x number
 ---@param y number
 ---@param width number
 ---@param height number
 ---@param color Color
-function rl.DrawRectangleLines(x, y, width, height, color) end
+function DrawRectangleLines(x, y, width, height, color) end
 
 ---@param center Vector2
 ---@param radius number
 ---@param color Color
-function rl.DrawCircleV(center, radius, color) end
+function DrawCircleV(center, radius, color) end
 
 ---@param rec Rectangle
 ---@param color Color
-function rl.DrawRectangleRec(rec, color) end
+function DrawRectangleRec(rec, color) end
 
 ---@param rec Rectangle
 ---@param origin Vector2
 ---@param rotation number
 ---@param color Color
-function rl.DrawRectanglePro(rec, origin, rotation, color) end
+function DrawRectanglePro(rec, origin, rotation, color) end
 
 ---@param rec1 Rectangle
 ---@param rec2 Rectangle
 ---@return boolean
-function rl.CheckCollisionRecs(rec1, rec2) end
+function CheckCollisionRecs(rec1, rec2) end
 
 ---@param center1 Vector2
 ---@param radius1 number
 ---@param center2 Vector2
 ---@param radius2 number
 ---@return boolean
-function rl.CheckCollisionCircles(center1, radius1, center2, radius2) end
+function CheckCollisionCircles(center1, radius1, center2, radius2) end
 
 ---@param point Vector2
 ---@param rec Rectangle
 ---@return boolean
-function rl.CheckCollisionPointRec(point, rec) end
+function CheckCollisionPointRec(point, rec) end
 
 ---@param center Vector2
 ---@param radius number
 ---@param rec Rectangle
 ---@return boolean
-function rl.CheckCollisionCircleRec(center, radius, rec) end
+function CheckCollisionCircleRec(center, radius, rec) end
 
 ---@param point Vector2
 ---@param center Vector2
 ---@param radius number
 ---@return boolean
-function rl.CheckCollisionPointCircle(point, center, radius) end
+function CheckCollisionPointCircle(point, center, radius) end
 
 ---@param point Vector2
 ---@param p1 Vector2
 ---@param p2 Vector2
 ---@param p3 Vector2
 ---@return boolean
-function rl.CheckCollisionPointTriangle(point, p1, p2, p3) end
+function CheckCollisionPointTriangle(point, p1, p2, p3) end
 
 ---@param rec1 Rectangle
 ---@param rec2 Rectangle
 ---@return Rectangle
-function rl.GetCollisionRec(rec1, rec2) end
+function GetCollisionRec(rec1, rec2) end
 
 ---@param startPos Vector2
 ---@param endPos Vector2
 ---@param thick number
 ---@param color Color
-function rl.DrawLineEx(startPos, endPos, thick, color) end
+function DrawLineEx(startPos, endPos, thick, color) end
 
 ---@param startPos Vector2
 ---@param endPos Vector2
 ---@param thick number
 ---@param color Color
-function rl.DrawLineBezier(startPos, endPos, thick, color) end
+function DrawLineBezier(startPos, endPos, thick, color) end
 
 ---@param center Vector2
 ---@param radius number
@@ -433,7 +586,7 @@ function rl.DrawLineBezier(startPos, endPos, thick, color) end
 ---@param endAngle number
 ---@param segments integer
 ---@param color Color
-function rl.DrawCircleSector(center, radius, startAngle, endAngle, segments, color) end
+function DrawCircleSector(center, radius, startAngle, endAngle, segments, color) end
 
 ---@param center Vector2
 ---@param innerRadius number
@@ -442,33 +595,33 @@ function rl.DrawCircleSector(center, radius, startAngle, endAngle, segments, col
 ---@param endAngle number
 ---@param segments integer
 ---@param color Color
-function rl.DrawRing(center, innerRadius, outerRadius, startAngle, endAngle, segments, color) end
+function DrawRing(center, innerRadius, outerRadius, startAngle, endAngle, segments, color) end
 
 ---@param centerX number
 ---@param centerY number
 ---@param radiusH number
 ---@param radiusV number
 ---@param color Color
-function rl.DrawEllipse(centerX, centerY, radiusH, radiusV, color) end
+function DrawEllipse(centerX, centerY, radiusH, radiusV, color) end
 
 ---@param centerX number
 ---@param centerY number
 ---@param radiusH number
 ---@param radiusV number
 ---@param color Color
-function rl.DrawEllipseLines(centerX, centerY, radiusH, radiusV, color) end
+function DrawEllipseLines(centerX, centerY, radiusH, radiusV, color) end
 
 ---@param rec Rectangle
 ---@param roundness number
 ---@param segments integer
 ---@param color Color
-function rl.DrawRectangleRounded(rec, roundness, segments, color) end
+function DrawRectangleRounded(rec, roundness, segments, color) end
 
 ---@param rec Rectangle
 ---@param roundness number
 ---@param segments integer
 ---@param color Color
-function rl.DrawRectangleRoundedLines(rec, roundness, segments, color) end
+function DrawRectangleRoundedLines(rec, roundness, segments, color) end
 
 ---@param posX number
 ---@param posY number
@@ -476,7 +629,7 @@ function rl.DrawRectangleRoundedLines(rec, roundness, segments, color) end
 ---@param height number
 ---@param top Color
 ---@param bottom Color
-function rl.DrawRectangleGradientV(posX, posY, width, height, top, bottom) end
+function DrawRectangleGradientV(posX, posY, width, height, top, bottom) end
 
 ---@param posX number
 ---@param posY number
@@ -484,186 +637,286 @@ function rl.DrawRectangleGradientV(posX, posY, width, height, top, bottom) end
 ---@param height number
 ---@param left Color
 ---@param right Color
-function rl.DrawRectangleGradientH(posX, posY, width, height, left, right) end
+function DrawRectangleGradientH(posX, posY, width, height, left, right) end
 
 ---@param v1 Vector2
 ---@param v2 Vector2
 ---@param v3 Vector2
 ---@param color Color
-function rl.DrawTriangle(v1, v2, v3, color) end
+function DrawTriangle(v1, v2, v3, color) end
 
 ---@param v1 Vector2
 ---@param v2 Vector2
 ---@param v3 Vector2
 ---@param color Color
-function rl.DrawTriangleLines(v1, v2, v3, color) end
+function DrawTriangleLines(v1, v2, v3, color) end
 
 ---@param center Vector2
 ---@param sides integer
 ---@param radius number
 ---@param rotation number
 ---@param color Color
-function rl.DrawPoly(center, sides, radius, rotation, color) end
+function DrawPoly(center, sides, radius, rotation, color) end
 
 ---@param center Vector2
 ---@param sides integer
 ---@param radius number
 ---@param rotation number
 ---@param color Color
-function rl.DrawPolyLines(center, sides, radius, rotation, color) end
+function DrawPolyLines(center, sides, radius, rotation, color) end
+
+---@param points Vector2[]
+---@param thick number
+---@param color Color
+function DrawSplineLinear(points, thick, color) end
+
+---@param points Vector2[]
+---@param thick number
+---@param color Color
+function DrawSplineBasis(points, thick, color) end
+
+---@param points Vector2[]
+---@param thick number
+---@param color Color
+function DrawSplineCatmullRom(points, thick, color) end
+
+---@param points Vector2[]
+---@param thick number
+---@param color Color
+function DrawSplineBezierQuadratic(points, thick, color) end
+
+---@param points Vector2[]
+---@param thick number
+---@param color Color
+function DrawSplineBezierCubic(points, thick, color) end
 
 ---@param key integer
 ---@return boolean
-function rl.IsKeyDown(key) end
+function IsKeyDown(key) end
 
 ---@param key integer
 ---@return boolean
-function rl.IsKeyPressed(key) end
+function IsKeyPressed(key) end
 
 ---@param key integer
 ---@return boolean
-function rl.IsKeyReleased(key) end
+function IsKeyReleased(key) end
 
 ---@param key integer
 ---@return boolean
-function rl.IsKeyUp(key) end
+function IsKeyUp(key) end
 
 ---@param button integer
 ---@return boolean
-function rl.IsMouseButtonDown(button) end
+function IsMouseButtonDown(button) end
 
 ---@param button integer
 ---@return boolean
-function rl.IsMouseButtonPressed(button) end
+function IsMouseButtonPressed(button) end
 
 ---@param button integer
 ---@return boolean
-function rl.IsMouseButtonReleased(button) end
+function IsMouseButtonReleased(button) end
 
 ---@return Vector2
-function rl.GetMousePosition() end
+function GetMousePosition() end
 
 ---@return number
-function rl.GetMouseWheelMove() end
+function GetMouseWheelMove() end
+
+function ShowCursor() end
+
+function HideCursor() end
+
+---@return boolean
+function IsCursorHidden() end
+
+function EnableCursor() end
+
+function DisableCursor() end
+
+---@return boolean
+function IsCursorOnScreen() end
+
+---@return Vector2
+function GetMouseDelta() end
+
+---@param x integer
+---@param y integer
+function SetMousePosition(x, y) end
+
+---@param offsetX integer
+---@param offsetY integer
+function SetMouseOffset(offsetX, offsetY) end
+
+---@param scaleX number
+---@param scaleY number
+function SetMouseScale(scaleX, scaleY) end
+
+---@param cursor integer
+function SetMouseCursor(cursor) end
+
+---@return integer
+function GetKeyPressed() end
+
+---@return integer
+function GetCharPressed() end
+
+---@param key integer
+function SetExitKey(key) end
+
+---@return string?
+function GetClipboardText() end
+
+---@param text string
+function SetClipboardText(text) end
 
 ---@param gamepad integer
 ---@return boolean
-function rl.IsGamepadAvailable(gamepad) end
+function IsGamepadAvailable(gamepad) end
 
 ---@param gamepad integer
 ---@return string?
-function rl.GetGamepadName(gamepad) end
+function GetGamepadName(gamepad) end
 
 ---@param gamepad integer
 ---@param button integer
 ---@return boolean
-function rl.IsGamepadButtonDown(gamepad, button) end
+function IsGamepadButtonDown(gamepad, button) end
 
 ---@param gamepad integer
 ---@param button integer
 ---@return boolean
-function rl.IsGamepadButtonPressed(gamepad, button) end
+function IsGamepadButtonPressed(gamepad, button) end
 
 ---@param gamepad integer
 ---@param button integer
 ---@return boolean
-function rl.IsGamepadButtonReleased(gamepad, button) end
+function IsGamepadButtonReleased(gamepad, button) end
 
 ---@param gamepad integer
 ---@param button integer
 ---@return boolean
-function rl.IsGamepadButtonUp(gamepad, button) end
+function IsGamepadButtonUp(gamepad, button) end
 
 ---@param gamepad integer
 ---@return integer
-function rl.GetGamepadAxisCount(gamepad) end
+function GetGamepadAxisCount(gamepad) end
 
 ---@param gamepad integer
 ---@param axis integer
 ---@return number
-function rl.GetGamepadAxisMovement(gamepad, axis) end
+function GetGamepadAxisMovement(gamepad, axis) end
 
 ---@param text string
 ---@param posX number
 ---@param posY number
 ---@param fontSize number
 ---@param color Color
-function rl.DrawText(text, posX, posY, fontSize, color) end
+function DrawText(text, posX, posY, fontSize, color) end
 
 ---@param text string
 ---@param fontSize number
 ---@return integer
-function rl.MeasureText(text, fontSize) end
+function MeasureText(text, fontSize) end
 
 ---@param posX number
 ---@param posY number
-function rl.DrawFPS(posX, posY) end
+function DrawFPS(posX, posY) end
 
 ---@param fileName string
 ---@return Sound
-function rl.LoadSound(fileName) end
+function LoadSound(fileName) end
 
 ---@param sound Sound
-function rl.UnloadSound(sound) end
+function UnloadSound(sound) end
 
 ---@param sound Sound
-function rl.PlaySound(sound) end
+function PlaySound(sound) end
 
 ---@param sound Sound
-function rl.StopSound(sound) end
+function StopSound(sound) end
 
 ---@param sound Sound
 ---@return boolean
-function rl.IsSoundPlaying(sound) end
+function IsSoundPlaying(sound) end
 
 ---@param sound Sound
 ---@param volume number
-function rl.SetSoundVolume(sound, volume) end
+function SetSoundVolume(sound, volume) end
+
+---@param sound Sound
+---@param pitch number
+function SetSoundPitch(sound, pitch) end
+
+---@param sound Sound
+---@param pan number
+function SetSoundPan(sound, pan) end
 
 ---@param fileName string
 ---@return Music
-function rl.LoadMusicStream(fileName) end
+function LoadMusicStream(fileName) end
 
 ---@param music Music
-function rl.UnloadMusicStream(music) end
+function UnloadMusicStream(music) end
 
 ---@param music Music
-function rl.PlayMusicStream(music) end
+function PlayMusicStream(music) end
 
 ---@param music Music
-function rl.UpdateMusicStream(music) end
+function UpdateMusicStream(music) end
 
 ---@param music Music
-function rl.StopMusicStream(music) end
+function StopMusicStream(music) end
 
 ---@param music Music
-function rl.PauseMusicStream(music) end
+function PauseMusicStream(music) end
 
 ---@param music Music
-function rl.ResumeMusicStream(music) end
+function ResumeMusicStream(music) end
 
 ---@param music Music
 ---@return boolean
-function rl.IsMusicStreamPlaying(music) end
+function IsMusicStreamPlaying(music) end
 
 ---@param music Music
 ---@param volume number
-function rl.SetMusicVolume(music, volume) end
+function SetMusicVolume(music, volume) end
+
+---@param music Music
+---@param pitch number
+function SetMusicPitch(music, pitch) end
+
+---@param music Music
+---@param pan number
+function SetMusicPan(music, pan) end
+
+---@param music Music
+---@return number
+function GetMusicTimeLength(music) end
+
+---@param music Music
+---@return number
+function GetMusicTimePlayed(music) end
+
+---@param music Music
+---@param position number
+function SeekMusicStream(music, position) end
 
 ---@param fileName string
 ---@return Font
-function rl.LoadFont(fileName) end
+function LoadFont(fileName) end
 
 ---@param fileName string
 ---@param fontSize integer
 ---@return Font
-function rl.LoadFontEx(fileName, fontSize) end
+function LoadFontEx(fileName, fontSize) end
 
 ---@param font Font
-function rl.UnloadFont(font) end
+function UnloadFont(font) end
 
 ---@return Font
-function rl.GetFontDefault() end
+function GetFontDefault() end
 
 ---@param font Font
 ---@param text string
@@ -671,7 +924,7 @@ function rl.GetFontDefault() end
 ---@param fontSize number
 ---@param spacing number
 ---@param tint Color
-function rl.DrawTextEx(font, text, position, fontSize, spacing, tint) end
+function DrawTextEx(font, text, position, fontSize, spacing, tint) end
 
 ---@param font Font
 ---@param text string
@@ -681,57 +934,119 @@ function rl.DrawTextEx(font, text, position, fontSize, spacing, tint) end
 ---@param fontSize number
 ---@param spacing number
 ---@param tint Color
-function rl.DrawTextPro(font, text, position, origin, rotation, fontSize, spacing, tint) end
+function DrawTextPro(font, text, position, origin, rotation, fontSize, spacing, tint) end
 
 ---@param font Font
 ---@param text string
 ---@param fontSize number
 ---@param spacing number
 ---@return Vector2
-function rl.MeasureTextEx(font, text, fontSize, spacing) end
+function MeasureTextEx(font, text, fontSize, spacing) end
 
 ---@param start number
 ---@param stop number
 ---@param amount number
 ---@return number
-function rl.Lerp(start, stop, amount) end
+function Lerp(start, stop, amount) end
 
 ---@param value number
 ---@param min number
 ---@param max number
 ---@return number
-function rl.Clamp(value, min, max) end
+function Clamp(value, min, max) end
 
 ---@param fileName string
 ---@return Texture2D
-function rl.LoadTexture(fileName) end
+function LoadTexture(fileName) end
 
 ---@param texture Texture2D
-function rl.UnloadTexture(texture) end
+function UnloadTexture(texture) end
+
+---@param fileName string
+---@return Image
+function LoadImage(fileName) end
+
+---@param image Image
+function UnloadImage(image) end
+
+---@param image Image
+---@param fileName string
+---@return boolean
+function ExportImage(image, fileName) end
+
+---@param image Image
+---@param newWidth integer
+---@param newHeight integer
+function ImageResize(image, newWidth, newHeight) end
+
+---@param image Image
+---@param crop Rectangle
+function ImageCrop(image, crop) end
+
+---@param image Image
+function ImageFlipVertical(image) end
+
+---@param image Image
+function ImageFlipHorizontal(image) end
+
+---@param image Image
+---@param degrees integer
+function ImageRotate(image, degrees) end
+
+---@param image Image
+---@param x integer
+---@param y integer
+---@return Color
+function GetImageColor(image, x, y) end
+
+---@param image Image
+---@param posX integer
+---@param posY integer
+---@param color Color
+function ImageDrawPixel(image, posX, posY, color) end
+
+---@param image Image
+---@param centerX integer
+---@param centerY integer
+---@param radius integer
+---@param color Color
+function ImageDrawCircle(image, centerX, centerY, radius, color) end
+
+---@param image Image
+---@param posX integer
+---@param posY integer
+---@param width integer
+---@param height integer
+---@param color Color
+function ImageDrawRectangle(image, posX, posY, width, height, color) end
+
+---@param image Image
+---@return Texture2D
+function LoadTextureFromImage(image) end
 
 ---@param texture Texture2D
 ---@param posX number
 ---@param posY number
 ---@param tint Color
-function rl.DrawTexture(texture, posX, posY, tint) end
+function DrawTexture(texture, posX, posY, tint) end
 
 ---@param texture Texture2D
 ---@param position Vector2
 ---@param tint Color
-function rl.DrawTextureV(texture, position, tint) end
+function DrawTextureV(texture, position, tint) end
 
 ---@param texture Texture2D
 ---@param position Vector2
 ---@param rotation number
 ---@param scale number
 ---@param tint Color
-function rl.DrawTextureEx(texture, position, rotation, scale, tint) end
+function DrawTextureEx(texture, position, rotation, scale, tint) end
 
 ---@param texture Texture2D
 ---@param source Rectangle
 ---@param position Vector2
 ---@param tint Color
-function rl.DrawTextureRec(texture, source, position, tint) end
+function DrawTextureRec(texture, source, position, tint) end
 
 ---@param texture Texture2D
 ---@param source Rectangle
@@ -739,115 +1054,234 @@ function rl.DrawTextureRec(texture, source, position, tint) end
 ---@param origin Vector2
 ---@param rotation number
 ---@param tint Color
-function rl.DrawTexturePro(texture, source, dest, origin, rotation, tint) end
+function DrawTexturePro(texture, source, dest, origin, rotation, tint) end
 
 ---@param width integer
 ---@param height integer
 ---@return RenderTexture2D
-function rl.LoadRenderTexture(width, height) end
+function LoadRenderTexture(width, height) end
 
 ---@param target RenderTexture2D
-function rl.UnloadRenderTexture(target) end
+function UnloadRenderTexture(target) end
 
 ---@param target RenderTexture2D
-function rl.BeginTextureMode(target) end
+function BeginTextureMode(target) end
 
-function rl.EndTextureMode() end
+function EndTextureMode() end
+
+---@param vsFileName string?
+---@param fsFileName string?
+---@return Shader
+function LoadShader(vsFileName, fsFileName) end
+
+---@param shader Shader
+function UnloadShader(shader) end
+
+---@param shader Shader
+---@return boolean
+function IsShaderValid(shader) end
+
+---@param shader Shader
+---@param uniformName string
+---@return integer
+function GetShaderLocation(shader, uniformName) end
+
+---@param shader Shader
+---@param attribName string
+---@return integer
+function GetShaderLocationAttrib(shader, attribName) end
+
+---@param shader Shader
+---@param loc integer
+---@param value number
+function SetShaderValueFloat(shader, loc, value) end
+
+---@param shader Shader
+---@param loc integer
+---@param x number
+---@param y number
+function SetShaderValueVec2(shader, loc, x, y) end
+
+---@param shader Shader
+---@param loc integer
+---@param vec Vector3
+function SetShaderValueVec3(shader, loc, vec) end
+
+---@param shader Shader
+---@param loc integer
+---@param vec Vector4
+function SetShaderValueVec4(shader, loc, vec) end
+
+---@param shader Shader
+---@param loc integer
+---@param value integer
+function SetShaderValueInt(shader, loc, value) end
+
+---@param shader Shader
+---@param loc integer
+---@param texture Texture2D
+function SetShaderValueTexture(shader, loc, texture) end
+
+---@param shader Shader
+---@param loc integer
+---@param mat Matrix
+function SetShaderValueMatrix(shader, loc, mat) end
+
+---@param shader Shader
+function BeginShaderMode(shader) end
+
+function EndShaderMode() end
 
 ---@param offset Vector2
 ---@param target Vector2
 ---@param rotation? number
 ---@param zoom? number
 ---@return Camera2D
-function rl.Camera2D(offset, target, rotation, zoom) end
+function Camera2D(offset, target, rotation, zoom) end
 
 ---@param camera Camera2D
-function rl.BeginMode2D(camera) end
+function BeginMode2D(camera) end
 
-function rl.EndMode2D() end
+function EndMode2D() end
 
 ---@param position Vector2
 ---@param camera Camera2D
 ---@return Vector2
-function rl.GetScreenToWorld2D(position, camera) end
+function GetScreenToWorld2D(position, camera) end
 
 ---@param position Vector2
 ---@param camera Camera2D
 ---@return Vector2
-function rl.GetWorldToScreen2D(position, camera) end
+function GetWorldToScreen2D(position, camera) end
 
 ---@return number
-function rl.GetTime() end
+function GetTime() end
 
 ---@param title string
-function rl.SetWindowTitle(title) end
+function SetWindowTitle(title) end
 
 ---@param width integer
 ---@param height integer
-function rl.SetWindowSize(width, height) end
+function SetWindowSize(width, height) end
 
-function rl.ToggleFullscreen() end
-
----@return boolean
-function rl.IsWindowFocused() end
+function ToggleFullscreen() end
 
 ---@return boolean
-function rl.IsWindowResized() end
+function IsWindowFocused() end
 
 ---@return boolean
-function rl.IsWindowMinimized() end
+function IsWindowResized() end
 
 ---@return boolean
-function rl.IsWindowMaximized() end
+function IsWindowMinimized() end
+
+---@return boolean
+function IsWindowMaximized() end
 
 ---@return integer
-function rl.GetCurrentMonitor() end
+function GetCurrentMonitor() end
 
 ---@param monitor integer
 ---@return integer
-function rl.GetMonitorWidth(monitor) end
+function GetMonitorWidth(monitor) end
 
 ---@param monitor integer
 ---@return integer
-function rl.GetMonitorHeight(monitor) end
+function GetMonitorHeight(monitor) end
+
+---@param x integer
+---@param y integer
+function SetWindowPosition(x, y) end
+
+---@return Vector2
+function GetWindowPosition() end
+
+---@param width integer
+---@param height integer
+function SetWindowMinSize(width, height) end
+
+---@param width integer
+---@param height integer
+function SetWindowMaxSize(width, height) end
+
+---@param opacity number
+function SetWindowOpacity(opacity) end
+
+---@return Vector2
+function GetWindowScaleDPI() end
+
+---@param monitor integer
+---@return string?
+function GetMonitorName(monitor) end
 
 ---@return integer
-function rl.GetFPS() end
+function GetMonitorCount() end
+
+---@param monitor integer
+---@return Vector2
+function GetMonitorPosition(monitor) end
+
+---@param monitor integer
+---@return integer
+function GetMonitorRefreshRate(monitor) end
+
+---@param fileName string
+function TakeScreenshot(fileName) end
+
+---@return integer
+function GetFPS() end
 
 ---@param seed integer
-function rl.SetRandomSeed(seed) end
+function SetRandomSeed(seed) end
 
 ---@param min integer
 ---@param max integer
 ---@return integer
-function rl.GetRandomValue(min, max) end
+function GetRandomValue(min, max) end
+
+---@param fileName string
+---@return boolean
+function FileExists(fileName) end
+
+---@param dirPath string
+---@return boolean
+function DirectoryExists(dirPath) end
+
+---@param fileName string
+---@return string?
+function LoadFileText(fileName) end
+
+---@param fileName string
+---@param text string
+---@return boolean
+function SaveFileText(fileName, text) end
 
 ---@return integer
-function rl.GetScreenWidth() end
+function GetScreenWidth() end
 
 ---@return integer
-function rl.GetScreenHeight() end
+function GetScreenHeight() end
 
 ---@return number
-function rl.GetFrameTime() end
+function GetFrameTime() end
 
 ---@param width number
 ---@param height number
 ---@param title string
-function rl.InitWindow(width, height, title) end
+function InitWindow(width, height, title) end
 
-function rl.InitAudioDevice() end
+function InitAudioDevice() end
 
 ---@param fps number
-function rl.SetTargetFPS(fps) end
+function SetTargetFPS(fps) end
 
 ---@return boolean
-function rl.WindowShouldClose() end
+function WindowShouldClose() end
 
-function rl.BeginDrawing() end
+function BeginDrawing() end
 
-function rl.EndDrawing() end
+function EndDrawing() end
 
-function rl.CloseWindow() end
+function CloseWindow() end
 
-function rl.CloseAudioDevice() end
+function CloseAudioDevice() end
